@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lattice Visualizer</title>
+<style>
+:root{--bg:#fafaf9;--fg:#1c1917;--mut:#78716c;--card:#ffffff;--line:#e7e5e4;--pt:#334155;--b1:#dc2626;--b2:#2563eb;--b3:#16a34a;--sv:#d97706;--acc:#7c3aed;--cell:rgba(124,58,237,.12)}
+@media (prefers-color-scheme:dark){:root{--bg:#161412;--fg:#f5f5f4;--mut:#a8a29e;--card:#1f1c1a;--line:#3a3532;--pt:#cbd5e1;--b1:#f87171;--b2:#60a5fa;--b3:#4ade80;--sv:#fbbf24;--acc:#a78bfa;--cell:rgba(167,139,250,.16)}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg)}
+.app{display:flex;min-height:100vh}
+aside{width:330px;flex:none;padding:18px;border-right:1px solid var(--line);background:var(--card);overflow:auto}
+main{flex:1;position:relative;min-height:420px}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+canvas:active{cursor:grabbing}
+h1{font-size:18px;margin:0 0 2px}
+.sub{color:var(--mut);margin:0 0 14px;font-size:13px}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:16px 0 6px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;color:var(--fg);padding:7px;cursor:pointer;font:inherit}
+.seg button.on{background:var(--acc);color:#fff}
+select,input[type=text]{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
+input.bad{border-color:#dc2626}
+#grid{display:grid;gap:6px;align-items:center}
+#grid .lab{font-weight:600}
+label.chk{display:flex;gap:8px;align-items:center;margin:4px 0;cursor:pointer}
+input[type=range]{width:100%}
+button.btn{padding:6px 10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;cursor:pointer;font:inherit}
+.info{font-size:13px;line-height:1.6}
+.info code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+#msg{position:absolute;left:12px;bottom:10px;color:var(--mut);font-size:12px;pointer-events:none}
+.hint{font-size:12px;color:var(--mut);margin-top:4px}
+@media (max-width:760px){.app{flex-direction:column}aside{width:auto;border-right:0;border-bottom:1px solid var(--line)}main{height:70vh;flex:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <h1>Lattice Visualizer</h1>
+  <p class="sub">Enter a basis; the lattice is all integer combinations of the rows.</p>
+
+  <h2>Dimension</h2>
+  <div class="seg" id="dimSeg"><button data-d="2" class="on">2D</button><button data-d="3">3D</button></div>
+
+  <h2>Basis (one vector per row)</h2>
+  <div id="grid"></div>
+  <div class="hint">Expressions work: <code>sqrt(3)/2</code>, <code>pi</code>, <code>1/3</code>.</div>
+
+  <h2>Presets</h2>
+  <select id="preset"></select>
+
+  <h2>Display</h2>
+  <label class="chk"><input type="checkbox" id="oPts" checked> Lattice points</label>
+  <label class="chk" id="rowLines"><input type="checkbox" id="oLines" checked> Lattice lines</label>
+  <label class="chk" id="rowNums"><input type="checkbox" id="oNums" checked> Grid numbers</label>
+  <label class="chk"><input type="checkbox" id="oCell" checked> Fundamental cell</label>
+  <label class="chk"><input type="checkbox" id="oBasis" checked> Basis vectors</label>
+  <label class="chk"><input type="checkbox" id="oRed"> Reduced basis (LLL)</label>
+  <label class="chk"><input type="checkbox" id="oSv" checked> Shortest vector</label>
+  <div id="rngWrap" style="display:none">
+    <h2>Coefficient range: −<span id="nVal">3</span> … <span id="nVal2">3</span></h2>
+    <input type="range" id="nRange" min="1" max="7" value="3">
+  </div>
+  <div style="margin-top:10px"><button class="btn" id="fit">Fit view</button></div>
+
+  <h2>Properties</h2>
+  <div class="info" id="info"></div>
+</aside>
+<main id="stage"><canvas id="cv"></canvas><div id="msg"></div></main>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const cv=$('#cv'),ctx=cv.getContext('2d');
+let dim=2, basis=[[1,0],[0,1]], inputs=[];
+let view={scale:60,px:0,py:0};
+let rot={yaw:-0.6,pitch:0.45,zoom:1};
+
+const S3=Math.sqrt(3)/2;
+const PRESETS={
+ 2:[
+  ['Square  ℤ²',[[1,0],[0,1]]],
+  ['Hexagonal (A₂)',[[1,0],[0.5,S3]]],
+  ['Rectangular',[[2,0],[0,1]]],
+  ['Bad basis of ℤ²  (det = 1)',[[5,2],[7,3]]],
+  ['Very skew basis of ℤ²',[[1,0],[7,1]]],
+  ['Index-5 sublattice of ℤ²',[[2,1],[-1,2]]],
+  ['Centered rectangular',[[1,0],[0.5,0.75]]],
+  ['Degenerate (det = 0)',[[1,2],[2,4]]]
+ ],
+ 3:[
+  ['Cubic  ℤ³',[[1,0,0],[0,1,0],[0,0,1]]],
+  ['FCC (primitive basis)',[[0,.5,.5],[.5,0,.5],[.5,.5,0]]],
+  ['BCC (primitive basis)',[[-.5,.5,.5],[.5,-.5,.5],[.5,.5,-.5]]],
+  ['Hexagonal (HCP-like)',[[1,0,0],[0.5,S3,0],[0,0,1.633]]],
+  ['Skew basis of ℤ³',[[1,0,0],[3,1,0],[2,5,1]]],
+  ['Tetragonal',[[1,0,0],[0,1,0],[0,0,2]]]
+ ]};
+
+const fmt=x=>{const r=Math.round(x*10000)/10000;return Object.is(r,-0)?'0':String(r)};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const dot=(u,v)=>u.reduce((s,x,i)=>s+x*v[i],0);
+const norm=v=>Math.sqrt(dot(v,v));
+const det=B=>B.length===2?B[0][0]*B[1][1]-B[0][1]*B[1][0]:
+  B[0][0]*(B[1][1]*B[2][2]-B[1][2]*B[2][1])-B[0][1]*(B[1][0]*B[2][2]-B[1][2]*B[2][0])+B[0][2]*(B[1][0]*B[2][1]-B[1][1]*B[2][0]);
+function inv(B){
+  const d=det(B); if(Math.abs(d)<1e-10) return null;
+  if(B.length===2) return [[B[1][1]/d,-B[0][1]/d],[-B[1][0]/d,B[0][0]/d]];
+  const m=B,c=(a,b,c2,d2)=>a*d2-b*c2;
+  return [
+   [c(m[1][1],m[1][2],m[2][1],m[2][2])/d, -c(m[0][1],m[0][2],m[2][1],m[2][2])/d, c(m[0][1],m[0][2],m[1][1],m[1][2])/d],
+   [-c(m[1][0],m[1][2],m[2][0],m[2][2])/d, c(m[0][0],m[0][2],m[2][0],m[2][2])/d, -c(m[0][0],m[0][2],m[1][0],m[1][2])/d],
+   [c(m[1][0],m[1][1],m[2][0],m[2][1])/d, -c(m[0][0],m[0][1],m[2][0],m[2][1])/d, c(m[0][0],m[0][1],m[1][0],m[1][1])/d]
+  ];
+}
+const comb=(coef,B)=>B[0].map((_,t)=>coef.reduce((s,c,i)=>s+c*B[i][t],0));
+
+function lll(b0,delta){
+  delta=delta||0.99;
+  let b=b0.map(v=>v.slice()); const n=b.length;
+  function gs(){
+    const bs=[],mu=Array.from({length:n},()=>Array(n).fill(0));
+    for(let i=0;i<n;i++){
+      let v=b[i].slice();
+      for(let j=0;j<i;j++){
+        const d=dot(bs[j],bs[j]); mu[i][j]=d>0?dot(b[i],bs[j])/d:0;
+        v=v.map((x,k)=>x-mu[i][j]*bs[j][k]);
+      }
+      bs.push(v);
+    }
+    return {bs,mu};
+  }
+  let G=gs(),k=1,guard=0;
+  while(k<n && guard++<2000){
+    for(let j=k-1;j>=0;j--){
+      const q=Math.round(G.mu[k][j]);
+      if(q){ b[k]=b[k].map((x,t)=>x-q*b[j][t]); G=gs(); }
+    }
+    if(dot(G.bs[k],G.bs[k])>=(delta-G.mu[k][k-1]**2)*dot(G.bs[k-1],G.bs[k-1])) k++;
+    else{ const t=b[k];b[k]=b[k-1];b[k-1]=t; G=gs(); k=Math.max(k-1,1); }
+  }
+  return b;
+}
+function shortest(B){
+  const n=B.length,R=3; let best=null,bl=Infinity;
+  const c=Array(n).fill(-R);
+  (function rec(i){
+    if(i===n){
+      if(c.every(x=>x===0)) return;
+      const v=comb(c,B),l=norm(v);
+      if(l<bl-1e-12){bl=l;best=v;}
+      return;
+    }
+    for(let x=-R;x<=R;x++){c[i]=x;rec(i+1);}
+  })(0);
+  return best;
+}
+
+/* ---------- parsing & inputs ---------- */
+function parseExpr(str){
+  const s=String(str).trim().replace(/sqrt/g,'Math.sqrt').replace(/pi/gi,'Math.PI');
+  if(s==='') return NaN;
+  const chk=s.replace(/Math\.(sqrt|PI)/g,'');
+  if(!/^[\d+\-*/().\s]*$/.test(chk)) return NaN;
+  try{ const v=Function('"use strict";return ('+s+')')(); return (typeof v==='number'&&isFinite(v))?v:NaN; }
+  catch(e){ const v=parseFloat(s); return isFinite(v)?v:NaN; }
+}
+function buildInputs(){
+  const g=$('#grid'); g.innerHTML=''; inputs=[];
+  g.style.gridTemplateColumns='auto repeat('+dim+',1fr)';
+  const ax=['x','y','z'];
+  for(let i=0;i<dim;i++){
+    const lab=document.createElement('div'); lab.className='lab'; lab.innerHTML='<span class="sw" style="background:var(--b'+(i+1)+')"></span>b'+(i+1);
+    g.append(lab); inputs[i]=[];
+    for(let j=0;j<dim;j++){
+      const inp=document.createElement('input'); inp.type='text'; inp.title=ax[j]; inp.setAttribute('aria-label','b'+(i+1)+' '+ax[j]);
+      inp.addEventListener('input',onEdit); g.append(inp); inputs[i][j]=inp;
+    }
+  }
+}
+function setInputs(M){ M.forEach((r,i)=>r.forEach((x,j)=>{inputs[i][j].value=fmt(x);inputs[i][j].classList.remove('bad');})); }
+function onEdit(){
+  let ok=true; const M=[];
+  for(let i=0;i<dim;i++){M[i]=[];for(let j=0;j<dim;j++){
+    const v=parseExpr(inputs[i][j].value); inputs[i][j].classList.toggle('bad',isNaN(v));
+    if(isNaN(v)) ok=false; M[i][j]=v;}}
+  if(ok){ basis=M; update(); }
+}
+function loadPreset(idx){
+  basis=PRESETS[dim][idx][1].map(r=>r.slice()); setInputs(basis); fitView(); update();
+}
+function buildPresets(){
+  const s=$('#preset'); s.innerHTML='';
+  PRESETS[dim].forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p[0];s.append(o);});
+}
+
+/* ---------- properties ---------- */
+let lastShort=null,lastRed=null;
+function update(){
+  const d=det(basis); const deg=Math.abs(d)<1e-10;
+  lastRed=null;lastShort=null;
+  let h='';
+  h+='det B = <code>'+fmt(d)+'</code>  →  covolume <code>'+fmt(Math.abs(d))+'</code><br>';
+  h+='|b<sub>i</sub>| = '+basis.map(v=>'<code>'+fmt(norm(v))+'</code>').join(', ')+'<br>';
+  if(dim===2){
+    const c=dot(basis[0],basis[1])/(norm(basis[0])*norm(basis[1])||1);
+    h+='angle(b₁,b₂) = <code>'+fmt(Math.acos(Math.max(-1,Math.min(1,c)))*180/Math.PI)+'°</code><br>';
+  }
+  const gram=basis.map(u=>basis.map(v=>dot(u,v)));
+  h+='Gram matrix: <code>'+gram.map(r=>'['+r.map(fmt).join(', ')+']').join(' ')+'</code><br>';
+  if(deg){ h+='<span style="color:#dc2626">Basis is linearly dependent — not a full-rank lattice.</span>'; }
+  else{
+    lastRed=lll(basis);
+    h+='Reduced basis (LLL): '+lastRed.map(v=>'<code>('+v.map(fmt).join(', ')+')</code>').join(' ')+'<br>';
+    lastShort=shortest(lastRed);
+    h+='<span class="sw" style="background:var(--sv)"></span>Shortest vector: <code>('+lastShort.map(fmt).join(', ')+')</code>, length <code>'+fmt(norm(lastShort))+'</code>';
+    const dd=det(lastRed); const hf=Math.pow(Math.abs(d)/ (dim===2?1:1),0); void hf;
+  }
+  $('#info').innerHTML=h;
+  draw();
+}
+
+/* ---------- drawing ---------- */
+function size(){
+  const r=cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  const W=Math.max(1,Math.round(r.width)),H=Math.max(1,Math.round(r.height));
+  if(cv.width!==W*dpr||cv.height!==H*dpr){cv.width=W*dpr;cv.height=H*dpr;}
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return [W,H];
+}
+function arrow(x0,y0,x1,y1,color,w,dashed){
+  ctx.save(); ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w||2;
+  if(dashed) ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.setLineDash([]);
+  const a=Math.atan2(y1-y0,x1-x0),L=9;
+  ctx.beginPath(); ctx.moveTo(x1,y1);
+  ctx.lineTo(x1-L*Math.cos(a-0.4),y1-L*Math.sin(a-0.4));
+  ctx.lineTo(x1-L*Math.cos(a+0.4),y1-L*Math.sin(a+0.4)); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function draw(){ dim===2?draw2():draw3(); }
+
+function draw2(){
+  const [W,H]=size(); ctx.clearRect(0,0,W,H);
+  const s=view.scale,ox=W/2+view.px,oy=H/2+view.py;
+  const T=(x,y)=>[ox+x*s,oy-y*s];
+  const msg=$('#msg'); msg.textContent='drag to pan · scroll to zoom';
+  const iv=inv(basis);
+  // axes
+  ctx.strokeStyle=css('--mut'); ctx.lineWidth=1; ctx.globalAlpha=.55; ctx.setLineDash([2,4]);
+  ctx.beginPath(); ctx.moveTo(0,oy); ctx.lineTo(W,oy); ctx.moveTo(ox,0); ctx.lineTo(ox,H); ctx.stroke();
+  ctx.setLineDash([]); ctx.globalAlpha=1;
+  if($('#oNums').checked){
+    const raw=70/s,pw=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/pw,st=(f<=1?1:f<=2?2:f<=5?5:10)*pw;
+    ctx.save(); ctx.fillStyle=css('--mut'); ctx.strokeStyle=css('--mut'); ctx.font='11px system-ui,sans-serif'; ctx.lineWidth=1;
+    const lx=Math.min(Math.max(ox,0),W-4), ly=Math.min(Math.max(oy,14),H-4);
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    const ty=Math.min(Math.max(oy+4,2),H-14);
+    for(let k=Math.ceil(-ox/s/st);k*st<=(W-ox)/s;k++){ if(!k) continue; const x=ox+k*st*s; ctx.beginPath();ctx.moveTo(x,oy-3);ctx.lineTo(x,oy+3);ctx.stroke(); ctx.fillText(fmt(k*st),x,ty); }
+    ctx.textAlign=ox<30?'left':'right'; ctx.textBaseline='middle';
+    const tx=ox<30?ox+7:Math.min(ox-7,W-2);
+    for(let k=Math.ceil(-(H-oy)/s/st);k*st<=oy/s;k++){ if(!k) continue; const y=oy-k*st*s; ctx.beginPath();ctx.moveTo(ox-3,y);ctx.lineTo(ox+3,y);ctx.stroke(); ctx.fillText(fmt(k*st),tx,y); }
+    ctx.textAlign='right'; ctx.textBaseline='top'; ctx.fillText('0',ox-5,oy+4);
+    ctx.restore();
+  }
+  if(!iv){ // degenerate: just draw basis
+    if($('#oBasis').checked) basis.forEach((v,i)=>{const p=T(v[0],v[1]);arrow(ox,oy,p[0],p[1],css('--b'+(i+1)),2.5);});
+    msg.textContent='Basis is linearly dependent — no 2D lattice to draw.'; return;
+  }
+  const cs=[[0,0],[W,0],[0,H],[W,H]].map(([sx,sy])=>{const x=(sx-ox)/s,y=(oy-sy)/s;return [x*iv[0][0]+y*iv[1][0],x*iv[0][1]+y*iv[1][1]];});
+  const i0=Math.floor(Math.min(...cs.map(c=>c[0])))-1,i1=Math.ceil(Math.max(...cs.map(c=>c[0])))+1;
+  const j0=Math.floor(Math.min(...cs.map(c=>c[1])))-1,j1=Math.ceil(Math.max(...cs.map(c=>c[1])))+1;
+  const count=(i1-i0+1)*(j1-j0+1);
+  const [b1,b2]=basis;
+  if(count>120000){ msg.textContent='Too many lattice points in view — zoom in.'; }
+  else{
+    if($('#oLines').checked && (i1-i0)<500 && (j1-j0)<500){
+      ctx.save(); ctx.lineWidth=1.25; ctx.globalAlpha=.6; ctx.setLineDash([5,4]);
+      ctx.strokeStyle=css('--b2'); ctx.beginPath();
+      for(let i=i0;i<=i1;i++){const a=T(i*b1[0]+j0*b2[0],i*b1[1]+j0*b2[1]),b=T(i*b1[0]+j1*b2[0],i*b1[1]+j1*b2[1]);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);}
+      ctx.stroke();
+      ctx.strokeStyle=css('--b1'); ctx.beginPath();
+      for(let j=j0;j<=j1;j++){const a=T(i0*b1[0]+j*b2[0],i0*b1[1]+j*b2[1]),b=T(i1*b1[0]+j*b2[0],i1*b1[1]+j*b2[1]);ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);}
+      ctx.stroke(); ctx.restore();
+    }
+  }
+  if($('#oCell').checked){
+    const p0=T(0,0),p1=T(b1[0],b1[1]),p2=T(b1[0]+b2[0],b1[1]+b2[1]),p3=T(b2[0],b2[1]);
+    ctx.fillStyle=css('--cell'); ctx.strokeStyle=css('--acc'); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(...p0);ctx.lineTo(...p1);ctx.lineTo(...p2);ctx.lineTo(...p3);ctx.closePath();ctx.fill();ctx.stroke();
+  }
+  if($('#oPts').checked && count<=120000){
+    ctx.fillStyle=css('--pt'); const r=Math.max(1.5,Math.min(4,s*0.06+1.2));
+    for(let i=i0;i<=i1;i++)for(let j=j0;j<=j1;j++){
+      const x=i*b1[0]+j*b2[0],y=i*b1[1]+j*b2[1],p=T(x,y);
+      if(p[0]<-5||p[0]>W+5||p[1]<-5||p[1]>H+5) continue;
+      ctx.beginPath(); ctx.arc(p[0],p[1],r,0,6.2832); ctx.fill();
+    }
+  }
+  // origin
+  ctx.strokeStyle=css('--fg'); ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(ox,oy,6,0,6.2832); ctx.stroke();
+  if($('#oRed').checked && lastRed) lastRed.forEach(v=>{const p=T(v[0],v[1]);arrow(ox,oy,p[0],p[1],css('--acc'),2,true);});
+  if($('#oBasis').checked) basis.forEach((v,i)=>{const p=T(v[0],v[1]);arrow(ox,oy,p[0],p[1],css('--b'+(i+1)),2.5);});
+  if($('#oSv').checked && lastShort){
+    const p=T(lastShort[0],lastShort[1]); arrow(ox,oy,p[0],p[1],css('--sv'),3);
+    ctx.fillStyle=css('--sv'); ctx.beginPath(); ctx.arc(p[0],p[1],5,0,6.2832); ctx.fill();
+  }
+}
+
+function draw3(){
+  const [W,H]=size(); ctx.clearRect(0,0,W,H);
+  const msg=$('#msg'); msg.textContent='drag to rotate · scroll to zoom';
+  const N=+$('#nRange').value;
+  const pts=[]; let R=1e-6;
+  for(let i=-N;i<=N;i++)for(let j=-N;j<=N;j++)for(let k=-N;k<=N;k++){
+    const p=comb([i,j,k],basis); pts.push(p); R=Math.max(R,norm(p));
+  }
+  const cy=Math.cos(rot.yaw),sy=Math.sin(rot.yaw),cp=Math.cos(rot.pitch),sp=Math.sin(rot.pitch);
+  const D=4*R,s0=Math.min(W,H)*0.44/R*rot.zoom;
+  const proj=p=>{
+    const x1=p[0]*cy+p[2]*sy,z1=-p[0]*sy+p[2]*cy,y1=p[1];
+    const y2=y1*cp-z1*sp,z2=y1*sp+z1*cp,f=D/Math.max(D*0.2,D-z2);
+    return [W/2+x1*s0*f,H/2-y2*s0*f,z2,f];
+  };
+  const O=proj([0,0,0]);
+  if($('#oCell').checked){
+    const cr=[];for(let m=0;m<8;m++){cr.push(comb([m&1,(m>>1)&1,(m>>2)&1],basis));}
+    const P=cr.map(proj);
+    ctx.strokeStyle=css('--acc'); ctx.lineWidth=1.3; ctx.beginPath();
+    for(let m=0;m<8;m++)for(let b=0;b<3;b++){const n=m^(1<<b);if(n>m){ctx.moveTo(P[m][0],P[m][1]);ctx.lineTo(P[n][0],P[n][1]);}}
+    ctx.stroke();
+  }
+  if($('#oPts').checked){
+    const arr=pts.map(proj).sort((a,b)=>a[2]-b[2]);
+    ctx.fillStyle=css('--pt');
+    for(const q of arr){
+      const t=Math.max(0,Math.min(1,(q[2]/R+1)/2));
+      ctx.globalAlpha=0.25+0.75*t; ctx.beginPath(); ctx.arc(q[0],q[1],1.4+2.2*q[3]*Math.min(1.6,rot.zoom),0,6.2832); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+  ctx.strokeStyle=css('--fg'); ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(O[0],O[1],6,0,6.2832); ctx.stroke();
+  if($('#oRed').checked && lastRed) lastRed.forEach(v=>{const p=proj(v);arrow(O[0],O[1],p[0],p[1],css('--acc'),2,true);});
+  if($('#oBasis').checked) basis.forEach((v,i)=>{const p=proj(v);arrow(O[0],O[1],p[0],p[1],css('--b'+(i+1)),2.5);});
+  if($('#oSv').checked && lastShort){
+    const p=proj(lastShort); arrow(O[0],O[1],p[0],p[1],css('--sv'),3);
+    ctx.fillStyle=css('--sv'); ctx.beginPath(); ctx.arc(p[0],p[1],5,0,6.2832); ctx.fill();
+  }
+  if(Math.abs(det(basis))<1e-10) msg.textContent='Basis is linearly dependent — points lie in a lower-dimensional lattice.';
+}
+
+/* ---------- view ---------- */
+function fitView(){
+  const W=cv.clientWidth||600,H=cv.clientHeight||500;
+  if(dim===2){
+    const m=Math.max(norm(basis[0]),norm(basis[1]),norm([basis[0][0]+basis[1][0],basis[0][1]+basis[1][1]]),1e-6);
+    view.scale=0.3*Math.min(W,H)/m; view.px=0; view.py=0;
+  } else { rot.zoom=1; }
+}
+
+/* ---------- events ---------- */
+let drag=null;
+cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',e=>{
+  if(!drag) return; const dx=e.clientX-drag.x,dy=e.clientY-drag.y; drag={x:e.clientX,y:e.clientY};
+  if(dim===2){view.px+=dx;view.py+=dy;}
+  else{rot.yaw+=dx*0.008;rot.pitch=Math.max(-1.5,Math.min(1.5,rot.pitch+dy*0.008));}
+  draw();
+});
+cv.addEventListener('pointerup',()=>drag=null);
+cv.addEventListener('pointercancel',()=>drag=null);
+cv.addEventListener('wheel',e=>{
+  e.preventDefault(); const k=Math.exp(-e.deltaY*0.0015);
+  if(dim===2){
+    const r=cv.getBoundingClientRect(),mx=e.clientX-r.left-r.width/2,my=e.clientY-r.top-r.height/2;
+    view.px=mx-(mx-view.px)*k; view.py=my-(my-view.py)*k; view.scale=Math.max(1,Math.min(5000,view.scale*k));
+  } else rot.zoom=Math.max(0.3,Math.min(6,rot.zoom*k));
+  draw();
+},{passive:false});
+
+['oPts','oLines','oNums','oCell','oBasis','oRed','oSv'].forEach(id=>$('#'+id).addEventListener('change',draw));
+$('#nRange').addEventListener('input',e=>{$('#nVal').textContent=e.target.value;$('#nVal2').textContent=e.target.value;draw();});
+$('#fit').addEventListener('click',()=>{fitView();rot.yaw=-0.6;rot.pitch=0.45;draw();});
+$('#preset').addEventListener('change',e=>loadPreset(+e.target.value));
+document.querySelectorAll('#dimSeg button').forEach(b=>b.addEventListener('click',()=>{
+  dim=+b.dataset.d;
+  document.querySelectorAll('#dimSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#rngWrap').style.display=dim===3?'block':'none';
+  $('#rowLines').style.display=dim===2?'flex':'none';
+  $('#rowNums').style.display=dim===2?'flex':'none';
+  buildInputs();buildPresets();loadPreset(0);
+}));
+new ResizeObserver(draw).observe($('#stage'));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',draw);
+
+buildInputs();buildPresets();
+basis=PRESETS[2][0][1].map(r=>r.slice());setInputs(basis);
+requestAnimationFrame(()=>{fitView();update();});
+})();
+</script>
+</body>
+</html>

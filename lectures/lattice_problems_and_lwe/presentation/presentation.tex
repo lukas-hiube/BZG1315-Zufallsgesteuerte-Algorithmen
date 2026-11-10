@@ -1,0 +1,60 @@
+\documentclass[
+    ngerman,
+    authorontitle=true,
+]{bfhbeamer}
+
+%\usepackage[main=ngerman]{babel}
+
+% Der folgende Block ist nur bei pdfTeX auf Versionen vor April 2018 notwendig
+\usepackage{iftex}
+\ifPDFTeX
+\usepackage[utf8]{inputenc}%kompatibilität mit TeX Versionen vor April 2018
+\fi
+\usepackage{bytefield}
+\usepackage{amssymb}
+\usepackage{pifont}
+\usepackage{xcolor}
+\usepackage{fontawesome5}
+\usepackage{todonotes}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{svg}
+\svgsetup{inkscapelatex=false}
+\usepackage{subfigure}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{tabto}
+
+%Makros für Formatierungen der Doku
+%Im Allgemeinen nicht notwendig!
+\let\code\texttt
+
+\title{Gitterprobleme \& LWE (Learning with errors)}
+\subtitle{BZE1315 Zufallsgesteurte Algorithmen - Post-Quanten Kryptographie}
+\author[]{Lukas von Allmen - vonal3@bfh.ch}
+\institute{Bern University of Applied Sciences}
+\titlegraphic*{\includegraphics{{../assets/title_graphics.png}}}
+
+%Activate the output of a frame number:
+\setbeamertemplate{section page}[BFH-ruled]
+\setbeamertemplate{page number in head/foot}[framenumber]
+
+\begin{document}
+
+\setbeamertemplate{title page}[BFH-graphic]
+\maketitle
+
+\section{Einleitung}\label{sec:introduction}
+\input{content/introduction}
+
+\section{Gitter}\label{sec:lattices}
+%\input{content/lattices}
+
+\section{Gitterprobleme}\label{sec:lattice_problems}
+%\input{content/lattice_problems}
+
+\section{Learning with errors}\label{sec:learning_with_errors}
+%\input{content/learning_with_errors}
+
+\end{document}
+

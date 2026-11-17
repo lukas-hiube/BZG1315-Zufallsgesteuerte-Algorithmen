@@ -38,7 +38,27 @@
 %Activate the output of a frame number:
 \setbeamertemplate{section page}[BFH-ruled]
 \setbeamertemplate{page number in head/foot}[framenumber]
-\setbeameroption{show notes on second screen=bottom}
+\setbeameroption{show notes on second screen=right}
+
+% Larger body text (template font sizes for titles, footline etc. stay unchanged)
+\setbeamerfont{normal text}{size=\large}
+\setbeamerfont{itemize/enumerate body}{size=\large}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\normalsize}
+\setbeamerfont{block title}{size=\large}
+\setbeamerfont{block body}{size=\large}
+\setbeamerfont{block title example}{size=\large}
+\setbeamerfont{block body example}{size=\large}
+\setbeamerfont{block title alerted}{size=\large}
+\setbeamerfont{block body alerted}{size=\large}
+
+% More vertical space between bullet points
+\let\origitemize\itemize
+\let\endorigitemize\enditemize
+\renewcommand{\itemize}{\origitemize\setlength{\itemsep}{0.8em}}
+\let\origenumerate\enumerate
+\let\endorigenumerate\endenumerate
+\renewcommand{\enumerate}{\origenumerate\setlength{\itemsep}{0.8em}}
 
 \begin{document}
 

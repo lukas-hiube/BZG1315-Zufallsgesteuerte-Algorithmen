@@ -1,24 +1,25 @@
-\begin{frame}{Rückblick}
-    \centering
+\begin{frame}{Rückblick~\textendash~Problemstellung}
     \begin{itemize}
         \item Einführung in Quanten-Computing
         \item Problem von Deutsch \& Deutsch-Jozsa-Algorithmus
         \item Starke indizien für Quantenüberlegenheit (Quantum Supremacy)
         \item Shor's-Algorithmus
+        \item \textbf{Was nun?}
     \end{itemize}
 
     \note[]{Quantenüberlegenheit: Quantencomputer schlägt klassische Rechner in spezifischen Aufgaben - jedoch noch nicht eindeutig bewiesen}
     \note[]{Wenn ein Quantencomputer gebaut werden kann um Shor's-Algorithmus effektiv laufen zu lassen, können klassische Verschlüsselungssysteme welche auf der Primfaktorzerlegung basieren einfach geknackt werden (e.g., RSA, ECC).}
 \end{frame}
 
-\begin{frame}{Was nun?}
-    \centering
-    \textbf{Suche nach quanten-resistenten Falltürfunktionen:}
+\begin{frame}{Entwicklung quanten-resistenter Einwegfunktionen}
     \begin{itemize}
-        \item \textbf{Learning with Errors (LWE)~\&~Gitterprobleme} (mutmasslich NP-Schwer~\&~quanten-resistent)
+        \item {
+            \textbf{Learning with Errors (LWE)~\&~Gitterprobleme}\newline
+            \(\rightarrow\) mutmasslich NP-Schwer~\&~quanten-resistent
+        }
         \item \textbf{Verfahren von Regev} (Odded Regev)
         \item Cryptographic Suite for Algebraic Lattices (CRYSTALS) Projekt
-        \item CRYSTALS-Team entwickelt \textbf{Kyber} (Verschlüsselung)~\&~Dilithium (Signaturen)
+        \item CRYSTALS entwickelt \textbf{Kyber} (Verschlüsselung)~\&~Dilithium (Signaturen)
         \item Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)
     \end{itemize}
 

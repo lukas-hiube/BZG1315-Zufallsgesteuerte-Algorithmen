@@ -7,8 +7,11 @@
         \item \textbf{Was nun?}
     \end{itemize}
 
-    \note[]{Quantenüberlegenheit: Quantencomputer schlägt klassische Rechner in spezifischen Aufgaben - jedoch noch nicht eindeutig bewiesen}
-    \note[]{Wenn ein Quantencomputer gebaut werden kann um Shor's-Algorithmus effektiv laufen zu lassen, können klassische Verschlüsselungssysteme welche auf der Primfaktorzerlegung basieren einfach geknackt werden (e.g., RSA, ECC).}
+    \note{
+        Quantenüberlegenheit: Quantencomputer schlägt klassische Rechner in spezifischen Aufgaben - jedoch noch nicht eindeutig bewiesen.\newline
+        \newline
+        Wenn ein Quantencomputer gebaut werden kann um Shor's-Algorithmus effektiv laufen zu lassen, können klassische Verschlüsselungssysteme welche auf der Primfaktorzerlegung basieren einfach geknackt werden (e.g., RSA, ECC).
+    }
 \end{frame}
 
 \begin{frame}{Entwicklung quanten-resistenter Einwegfunktionen}
@@ -23,12 +26,23 @@
         \item Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)
     \end{itemize}
 
-    \note[]{Einweg-/Falltürfunktion: "leicht" berechenbar, aber "schwer" umzukehren ist.}
-    \note[]{Es stellt sich heraus, dass sich dazu Learning with Errors (LWE) in kombination mit Gitterprblemen eignet}
-    \note[]{Diese Methode wurde 2005 erstmals von Odded Regev verwendet um ein Quanten-Resistentes Verschlüsselungsverfahren zu entwerfen}
-    \note[]{2018 erhielt Regev für diese Arbeit den Gödel-Preis}
-    \note[]{Das Verfahren wurde im Projekt CRYSTALS von einem Kryptografen-Team unter dem Namen "Kyber" weiterentwickelt und erstmals 2017 veröffentlicht}
-    \note[]{Kyber wurde von der NIST standartisiert und 2024 unter dem Namen Module-Lattice-Based Key-Encapsulation Mechanism (kruz: ML-KEM) veröffentlicht}
-    \note[]{In diesem Vortrag erarbeiten wir die mathematischen Grundlagen zum Verstehen von Gitterproblemen, Learning with Errors und wie man aus ihnen ein Verschlüsselungssystem entwerfen kann}
-    \note[]{Im nächsten Vortag schauen wir uns das Verfahren von Regev und Baby-Kyber an, eine vereinfachte Version von Kyber}
+    \note{
+        Es stellt sich heraus, dass sich dazu Learning with Errors (LWE) in kombination mit Gitterprblemen eignet.\newline
+        \newline
+        Diese Methode wurde 2005 erstmals von Odded Regev verwendet, um ein Quanten-Resistentes Verschlüsselungsverfahren zu entwerfen. 2018 erhielt Regev für diese Arbeit den Gödel-Preis.\newline
+        \newline
+        Das Verfahren wurde im Projekt CRYSTALS von einem Kryptografen-Team unter dem Namen "Kyber" weiterentwickelt und erstmals 2017 veröffentlicht.\newline
+        \newline
+        Kyber wurde von der NIST standartisiert und 2024 unter dem Namen Module-Lattice-Based Key-Encapsulation Mechanism (kruz: ML-KEM) veröffentlicht.\newline
+    }
+\end{frame}
+
+
+\begin{frame}{Übersicht}
+    \includegraphics[width=\textwidth]{../assets/postquantum_lectures_overview.excalidraw.png}
+    \note{
+        In diesem Vortrag erarbeiten wir die mathematischen Grundlagen zum Verstehen von Gitterproblemen, Learning with Errors und wie man aus ihnen ein Verschlüsselungssystem entwerfen kann.\newline
+        \newline
+        Im nächsten Vortag schauen wir uns das Verfahren von Regev und Baby-Kyber an, eine vereinfachte Version von Kyber.
+    }
 \end{frame}

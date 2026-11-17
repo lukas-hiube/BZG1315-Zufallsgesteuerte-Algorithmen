@@ -40,6 +40,13 @@
 \setbeamertemplate{page number in head/foot}[framenumber]
 \setbeameroption{show notes on second screen=right}
 
+% Title frame at the beginning of each section
+\AtBeginSection[]{
+    \begin{frame}
+        \sectionpage
+    \end{frame}
+}
+
 % Larger body text (template font sizes for titles, footline etc. stay unchanged)
 \setbeamerfont{normal text}{size=\large}
 \setbeamerfont{itemize/enumerate body}{size=\large}
@@ -65,10 +72,15 @@
 \setbeamertemplate{title page}[BFH-graphic]
 \maketitle
 
-\section{Einleitung}\label{sec:introduction}
+%\section{Einleitung}\label{sec:introduction}
 \input{content/introduction}
 
 \section{Mathematische Gitter}\label{sec:lattices}
+\note[]{
+    Gitter sind interessant im kryptografischen Kontext, weil ein Gitter verschiedene Basen haben kann (verschiedene "Beschreibungen" des Gitters).\newline
+    \newline
+    Wobei eine günstige Basis einige Berechnungen stark vereinfachen und eine schlechte Basis dieselbe Berechnung fast unmöglich machen kann.
+}
 \input{content/lattices}
 
 \section{Gitterprobleme}\label{sec:lattice_problems}

@@ -40,12 +40,12 @@ button.btn{padding:6px 10px;border:1px solid var(--line);background:var(--bg);co
 <div class="app">
 <aside>
   <h1>Lattice Visualizer</h1>
-  <p class="sub">Enter a basis; the lattice is all integer combinations of the rows.</p>
+  <p class="sub">Enter a basis; the lattice is all integer combinations of the columns.</p>
 
   <h2>Dimension</h2>
   <div class="seg" id="dimSeg"><button data-d="2" class="on">2D</button><button data-d="3">3D</button></div>
 
-  <h2>Basis (one vector per row)</h2>
+  <h2>Basis matrix B (one vector per column)</h2>
   <div id="grid"></div>
   <div class="hint">Expressions work: <code>sqrt(3)/2</code>, <code>pi</code>, <code>1/3</code>.</div>
 
@@ -170,13 +170,20 @@ function parseExpr(str){
   catch(e){ const v=parseFloat(s); return isFinite(v)?v:NaN; }
 }
 function buildInputs(){
+  // Matrix form: columns are the basis vectors b_i, rows are the coordinates x, y, z.
+  // inputs[i][j] still holds coordinate j of basis vector i.
   const g=$('#grid'); g.innerHTML=''; inputs=[];
   g.style.gridTemplateColumns='auto repeat('+dim+',1fr)';
   const ax=['x','y','z'];
+  g.append(document.createElement('div'));
   for(let i=0;i<dim;i++){
     const lab=document.createElement('div'); lab.className='lab'; lab.innerHTML='<span class="sw" style="background:var(--b'+(i+1)+')"></span>b'+(i+1);
     g.append(lab); inputs[i]=[];
-    for(let j=0;j<dim;j++){
+  }
+  for(let j=0;j<dim;j++){
+    const lab=document.createElement('div'); lab.className='lab'; lab.textContent=ax[j];
+    g.append(lab);
+    for(let i=0;i<dim;i++){
       const inp=document.createElement('input'); inp.type='text'; inp.title=ax[j]; inp.setAttribute('aria-label','b'+(i+1)+' '+ax[j]);
       inp.addEventListener('input',onEdit); g.append(inp); inputs[i][j]=inp;
     }

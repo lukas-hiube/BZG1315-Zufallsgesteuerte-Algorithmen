@@ -9,26 +9,106 @@
 \end{frame}
 
 \begin{frame}{Auffrischung: Euklidische Vektorräume}
-    \begin{itemize}
-        \item
-    \end{itemize}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Ein \textbf{euklidischer Vektorraum} ist ein reeller Vektorraum mit einem Skalarprodukt.
+                \item \textbf{Beispiel:} Die Ebene $\mathbb{R}^2$ mit dem Standard-Skalarprodukt
+                \[
+                    \langle \mathbf{u}, \mathbf{v} \rangle = u_1 v_1 + u_2 v_2
+                \]
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \begin{tikzpicture}[scale=0.6, >=stealth]
+                % grid and axes
+                \draw[help lines, gray!40] (-1.5,-2.5) grid (5.5,5.5);
+                \draw[->] (-1.5,0) -- (5.8,0) node[right] {$x_1$};
+                \draw[->] (0,-2.5) -- (0,5.8) node[above] {$x_2$};
+                % vectors
+                \draw[->, very thick, BFH-Orange] (0,0) -- (3,4) node[midway, above left] {$\mathbf{u}$};
+                \draw[->, very thick, blue!70!black] (0,0) -- (1,-2) node[midway, below left] {$\mathbf{v}$};
+                \draw[->, very thick, black!70] (0,0) -- (4,2) node[midway, above, sloped] {$\mathbf{u}+\mathbf{v}$};
+                % parallelogram
+                \draw[dashed, gray] (3,4) -- (4,2) -- (1,-2);
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
 \end{frame}
 
-\begin{frame}{Auffrischung: Lineare Unabhängigkeit}
-    \begin{itemize}
-        \item
-    \end{itemize}
-\end{frame}
+\begin{frame}{Auffrischung: Lineare Unabhängigkeit / Linear Kombinationen}
+    Vektoren $\mathbf{b}_1, \dots, \mathbf{b}_m$ sind \textbf{linear unabhängig}, wenn aus $\sum_i a_i \mathbf{b}_i = \mathbf{0}$ (Linearkombination) folgt, dass alle $a_i = 0$ sind.
 
-\begin{frame}{Auffrischung: Linear Kombinationen}
-    \begin{itemize}
-        \item
-    \end{itemize}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \centering
+            \textbf{Unabhängig}\\[0.3em]
+            $\mathbf{b}_1 = \begin{pmatrix} 2 \\ 1 \end{pmatrix}, \mathbf{b}_2 = \begin{pmatrix} 1 \\ 3 \end{pmatrix}$
+
+            \vspace{0.3em}
+            \begin{tikzpicture}[scale=0.5, >=stealth]
+                \draw[help lines, gray!40] (-0.5,-0.5) grid (4.5,4.5);
+                \draw[->] (-0.5,0) -- (4.8,0);
+                \draw[->] (0,-0.5) -- (0,4.8);
+                \draw[->, very thick, BFH-Orange] (0,0) -- (2,1) node[midway, below right] {$\mathbf{b}_1$};
+                \draw[->, very thick, blue!70!black] (0,0) -- (1,3) node[midway, above left] {$\mathbf{b}_2$};
+            \end{tikzpicture}
+
+            \vspace{0.3em}
+            {\small $a_1\mathbf{b}_1 + a_2\mathbf{b}_2 = \mathbf{0}$ hat nur die Lösung $a_1 = a_2 = 0$}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \textbf{Abhängig}\\[0.3em]
+            $\mathbf{b}_1 = \begin{pmatrix} 2 \\ 1 \end{pmatrix}, \mathbf{b}_2 = \begin{pmatrix} 4 \\ 2 \end{pmatrix}$
+
+            \vspace{0.3em}
+            \begin{tikzpicture}[scale=0.5, >=stealth]
+                \draw[help lines, gray!40] (-0.5,-0.5) grid (4.5,4.5);
+                \draw[->] (-0.5,0) -- (4.8,0);
+                \draw[->] (0,-0.5) -- (0,4.8);
+                \draw[->, very thick, blue!70!black] (0,0) -- (4,2) node[midway, above left] {$\mathbf{b}_2$};
+                \draw[->, very thick, BFH-Orange] (0,0) -- (2,1) node[midway, below right] {$\mathbf{b}_1$};
+            \end{tikzpicture}
+
+            \vspace{0.3em}
+            {\small $\mathbf{b}_2 = 2\mathbf{b}_1$, also $2\mathbf{b}_1 - \mathbf{b}_2 = \mathbf{0}$}
+        \end{column}
+    \end{columns}
+    \note{
+        Mit anderen Worten: Wenn die Vektoren linear unabhängig zueinander sind, kann man nur mit der triviallen Linearkombination (Summe aller Vektoren mal dem Skalar 0) erreicht werden.
+    }
 \end{frame}
 
 \begin{frame}{Gitter als Matritze}
-    \begin{itemize}
-        \item Ein Gitter kann äquivalent aus einer Matrix $\mathbf{B}$ erzeugt werden, deren Spaltenvektoren die Basisvektoren sind:
-        $\mathcal{L}(\mathbf{B}) = \{\mathbf{B}\mathbf{a} \mid \mathbf{a} \in \mathbb{Z}^m\}$
-    \end{itemize}
+    Ein Gitter lässt sich auch aus einer Matrix $\mathbf{B}$ (Basisvektoren als Spalten) erzeugen.
+
+    \vspace{1em}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \centering
+            \textbf{Basis}
+            \[
+                B = \left\{ \begin{pmatrix} 2 \\ 0 \end{pmatrix}, \begin{pmatrix} 1 \\ 2 \end{pmatrix} \right\}
+            \]
+            \[
+                \mathcal{L}(B) = \left\{ a_1 \begin{pmatrix} 2 \\ 0 \end{pmatrix} + a_2 \begin{pmatrix} 1 \\ 2 \end{pmatrix} \;\middle|\; a_1, a_2 \in \mathbb{Z} \right\}
+            \]
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \textbf{Matrixform}
+            \[
+                \mathbf{B} = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}
+            \]
+            \[
+                \mathcal{L}(\mathbf{B}) = \left\{ \mathbf{B}\mathbf{a} \;\middle|\; \mathbf{a} \in \mathbb{Z}^2 \right\}
+            \]
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Lattice Visualizer (Vibe Coded Tool)}
+    \includegraphics[width=\textwidth]{../assets/lattice_tool_simple_2d_lattice.png}
 \end{frame}

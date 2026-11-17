@@ -1,25 +1,33 @@
 \begin{frame}{Rückblick}
     \centering
-    \begin{columns}[t]
-       \begin{column}{0.48\textwidth}
-          \textbf{Das Problem:}
-          \begin{itemize}
-            \item Quantencomputer
-            \item Quantenüberlegenheit
-            \item Shor's-Algorithmus
-            \item Primfaktorzerlegung (e.g., RSA)
-            \item Diskreter-Logarithmus (e.g., Diffie-Hellman)
-          \end{itemize}
-       \end{column}
-       \begin{column}{0.48\textwidth}
-           \textbf{Was nun?}
-           \begin{itemize}
-               \item Aktives Forschungsfeld
-               \item Gitterbasierte Probleme
-               \item Learning With Errors (LWE)
-               \item Kyber
-               \item Andere Ansätze
-           \end{itemize}
-       \end{column}
-    \end{columns}
+    \begin{itemize}
+        \item Einführung in Quanten-Computing
+        \item Problem von Deutsch \& Deutsch-Jozsa-Algorithmus
+        \item Starke indizien für Quantenüberlegenheit (Quantum Supremacy)
+        \item Shor's-Algorithmus
+    \end{itemize}
+
+    \note[]{Quantenüberlegenheit: Quantencomputer schlägt klassische Rechner in spezifischen Aufgaben - jedoch noch nicht eindeutig bewiesen}
+    \note[]{Wenn ein Quantencomputer gebaut werden kann um Shor's-Algorithmus effektiv laufen zu lassen, können klassische Verschlüsselungssysteme welche auf der Primfaktorzerlegung basieren einfach geknackt werden (e.g., RSA, ECC).}
+\end{frame}
+
+\begin{frame}{Was nun?}
+    \centering
+    \textbf{Suche nach quanten-resistenten Falltürfunktionen:}
+    \begin{itemize}
+        \item \textbf{Learning with Errors (LWE)~\&~Gitterprobleme} (mutmasslich NP-Schwer~\&~quanten-resistent)
+        \item \textbf{Verfahren von Regev} (Odded Regev)
+        \item Cryptographic Suite for Algebraic Lattices (CRYSTALS) Projekt
+        \item CRYSTALS-Team entwickelt \textbf{Kyber} (Verschlüsselung)~\&~Dilithium (Signaturen)
+        \item Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)
+    \end{itemize}
+
+    \note[]{Einweg-/Falltürfunktion: "leicht" berechenbar, aber "schwer" umzukehren ist.}
+    \note[]{Es stellt sich heraus, dass sich dazu Learning with Errors (LWE) in kombination mit Gitterprblemen eignet}
+    \note[]{Diese Methode wurde 2005 erstmals von Odded Regev verwendet um ein Quanten-Resistentes Verschlüsselungsverfahren zu entwerfen}
+    \note[]{2018 erhielt Regev für diese Arbeit den Gödel-Preis}
+    \note[]{Das Verfahren wurde im Projekt CRYSTALS von einem Kryptografen-Team unter dem Namen "Kyber" weiterentwickelt und erstmals 2017 veröffentlicht}
+    \note[]{Kyber wurde von der NIST standartisiert und 2024 unter dem Namen Module-Lattice-Based Key-Encapsulation Mechanism (kruz: ML-KEM) veröffentlicht}
+    \note[]{In diesem Vortrag erarbeiten wir die mathematischen Grundlagen zum Verstehen von Gitterproblemen, Learning with Errors und wie man aus ihnen ein Verschlüsselungssystem entwerfen kann}
+    \note[]{Im nächsten Vortag schauen wir uns das Verfahren von Regev und Baby-Kyber an, eine vereinfachte Version von Kyber}
 \end{frame}

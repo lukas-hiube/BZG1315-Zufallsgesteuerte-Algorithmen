@@ -38,6 +38,7 @@
 %Activate the output of a frame number:
 \setbeamertemplate{section page}[BFH-ruled]
 \setbeamertemplate{page number in head/foot}[framenumber]
+\setbeameroption{show notes on second screen=bottom}
 
 \begin{document}
 
@@ -47,14 +48,20 @@
 \section{Einleitung}\label{sec:introduction}
 \input{content/introduction}
 
-\section{Gitter}\label{sec:lattices}
-%\input{content/lattices}
+\section{Mathematische Gitter}\label{sec:lattices}
+\input{content/lattices}
 
 \section{Gitterprobleme}\label{sec:lattice_problems}
-%\input{content/lattice_problems}
+\input{content/lattice_problems}
 
-\section{Learning with errors}\label{sec:learning_with_errors}
-%\input{content/learning_with_errors}
+\section{LWE (Learning with errors)}\label{sec:learning_with_errors}
+\input{content/learning_with_errors}
+
+\section{Verschlüsselungssystem basierend auf LWE \& Gitterproblemen}\label{sec:encryption_scheme}
+\input{content/encryption_scheme}
+
+\section{Zusammenfassung \& Ausblick}\label{sec:outro}
+\input{content/outro}
 
 \end{document}
 

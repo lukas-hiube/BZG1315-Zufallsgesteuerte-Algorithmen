@@ -2,16 +2,16 @@
 
 Vorträge:
 1. 14.11.26 - 60' - 90': Einführung in Gitterprobleme & LWE
-2. 01.12.26 - 60' - 90': erfahren von Regev & Einblick in (Baby)-Kyber
+2. 01.12.26 - 60' - 90': Verfahren von Regev & Einblick in (Baby)-Kyber
 
 ## Einführung in Gitterprobleme (Lattice Problems) & LWE (Learning with errors)
 
 Inhalt:
 - Einleitung
 - Gitter (Lattices)
-- Gitterprobleme (Lattice Problem)
+- Gitterprobleme (Lattice Problems)
 - LWE (Learning with errors)
-- Verschlüsselungssystem basierend auf LWE und Gitterproblemen
+- Verschlüsselungssysteme basierend auf LWE und Gitterproblemen
 
 Handout:
 - 

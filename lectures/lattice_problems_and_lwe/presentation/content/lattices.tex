@@ -112,3 +112,39 @@
 \begin{frame}{Lattice Visualizer (Vibe Coded Tool)}
     \includegraphics[width=\textwidth]{../assets/lattice_tool_simple_2d_lattice.png}
 \end{frame}
+
+\begin{frame}{Basen sind nicht eindeutig}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Ein Gitter hat \textbf{viele Basen}: dasselbe Gitter, verschiedene "Beschreibungen".
+                \item \textcolor{BFH-Orange}{\textbf{Gute Basis}}: kurze, fast orthogonale Vektoren.
+                \item \textcolor{blue!70!black}{\textbf{Schlechte Basis}}: lange, fast parallele Vektoren.
+                \item \textbf{Rang} $m$ (Anzahl Basisvektoren), \textbf{Dimension} $n$ (von $\mathbb{R}^n$); \textbf{Vollrang} falls $m = n$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \begin{tikzpicture}[scale=0.5, >=stealth]
+                \clip (-1.6,-1.6) rectangle (8.6,6.6);
+                \foreach \i in {-8,...,8} {
+                    \foreach \j in {-8,...,8} {
+                        \fill[gray] ({2*\i+\j},{2*\j}) circle (2pt);
+                    }
+                }
+                \draw[->] (-1.5,0) -- (8.5,0);
+                \draw[->] (0,-1.5) -- (0,6.5);
+                % good basis
+                \draw[->, very thick, BFH-Orange] (0,0) -- (2,0) node[midway, below] {$\mathbf{b}_1$};
+                \draw[->, very thick, BFH-Orange] (0,0) -- (1,2) node[midway, above left] {$\mathbf{b}_2$};
+                % bad basis (same lattice)
+                \draw[->, very thick, blue!70!black] (0,0) -- (7,2) node[near end, below right] {$\mathbf{b}_1'$};
+                \draw[->, very thick, blue!70!black] (0,0) -- (5,2) node[near end, above left] {$\mathbf{b}_2'$};
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
+    \note{
+        Beide Basen erzeugen dasselbe Gitter: $\mathbf{b}_1' = 3\mathbf{b}_1 + \mathbf{b}_2$, $\mathbf{b}_2' = 2\mathbf{b}_1 + \mathbf{b}_2$ (Determinante der Koeffizienten: 1).
+        Eine gute Basis kann einige Berechnungen stark vereinfachen, eine schlechte Basis dieselbe Berechnung fast unmöglich machen.
+    }
+\end{frame}

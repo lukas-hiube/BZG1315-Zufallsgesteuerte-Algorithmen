@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Lattice Visualizer</title>
 <style>
-:root{--bg:#fafaf9;--fg:#1c1917;--mut:#78716c;--card:#ffffff;--line:#e7e5e4;--pt:#334155;--b1:#dc2626;--b2:#2563eb;--b3:#16a34a;--sv:#d97706;--acc:#7c3aed;--cell:rgba(124,58,237,.12)}
-@media (prefers-color-scheme:dark){:root{--bg:#161412;--fg:#f5f5f4;--mut:#a8a29e;--card:#1f1c1a;--line:#3a3532;--pt:#cbd5e1;--b1:#f87171;--b2:#60a5fa;--b3:#4ade80;--sv:#fbbf24;--acc:#a78bfa;--cell:rgba(167,139,250,.16)}}
+:root{--bg:#fafaf9;--fg:#1c1917;--mut:#78716c;--card:#ffffff;--line:#e7e5e4;--pt:#334155;--b1:#dc2626;--b2:#2563eb;--b3:#16a34a;--sv:#d97706;--q:#db2777;--cl:#0891b2;--acc:#7c3aed;--cell:rgba(124,58,237,.12)}
+@media (prefers-color-scheme:dark){:root{--bg:#161412;--fg:#f5f5f4;--mut:#a8a29e;--card:#1f1c1a;--line:#3a3532;--pt:#cbd5e1;--b1:#f87171;--b2:#60a5fa;--b3:#4ade80;--sv:#fbbf24;--q:#f472b6;--cl:#22d3ee;--acc:#a78bfa;--cell:rgba(167,139,250,.16)}}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
 body{font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg)}
@@ -23,7 +23,7 @@ h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)
 .seg button.on{background:var(--acc);color:#fff}
 select,input[type=text]{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
 input.bad{border-color:#dc2626}
-#grid{display:grid;gap:6px;align-items:center}
+#grid,#qgrid{display:grid;gap:6px;align-items:center}
 #grid .lab{font-weight:600}
 label.chk{display:flex;gap:8px;align-items:center;margin:4px 0;cursor:pointer}
 input[type=range]{width:100%}
@@ -49,6 +49,12 @@ button.btn{padding:6px 10px;border:1px solid var(--line);background:var(--bg);co
   <div id="grid"></div>
   <div class="hint">Expressions work: <code>sqrt(3)/2</code>, <code>pi</code>, <code>1/3</code>.</div>
 
+  <div id="qWrap" style="display:none">
+    <h2>Query point q</h2>
+    <div id="qgrid"></div>
+    <div class="hint">Expressions work. In 2D you can also drag q on the canvas.</div>
+  </div>
+
   <h2>Presets</h2>
   <select id="preset"></select>
 
@@ -60,6 +66,7 @@ button.btn{padding:6px 10px;border:1px solid var(--line);background:var(--bg);co
   <label class="chk"><input type="checkbox" id="oBasis" checked> Basis vectors</label>
   <label class="chk"><input type="checkbox" id="oRed"> Reduced basis (LLL)</label>
   <label class="chk"><input type="checkbox" id="oSv" checked> Shortest vector</label>
+  <label class="chk"><input type="checkbox" id="oQ"> Query point q (CVP)</label>
   <div id="rngWrap" style="display:none">
     <h2>Coefficient range: −<span id="nVal">3</span> … <span id="nVal2">3</span></h2>
     <input type="range" id="nRange" min="1" max="7" value="3">
@@ -77,6 +84,8 @@ button.btn{padding:6px 10px;border:1px solid var(--line);background:var(--bg);co
 const $=s=>document.querySelector(s);
 const cv=$('#cv'),ctx=cv.getContext('2d');
 let dim=2, basis=[[1,0],[0,1]], inputs=[];
+let qv=[1.3,0.6], qInputs=[];
+const Q_DEFAULT={2:[1.3,0.6],3:[1.3,0.6,0.4]};
 let view={scale:60,px:0,py:0};
 let rot={yaw:-0.6,pitch:0.45,zoom:1};
 
@@ -160,6 +169,22 @@ function shortest(B){
   return best;
 }
 
+function closest(B,q){
+  // Babai rounding on the given (reduced) basis, then a small local search around it.
+  const n=B.length,iv=inv(B); if(!iv) return null;
+  const c=Array.from({length:n},(_,i)=>q.reduce((s,x,t)=>s+x*iv[t][i],0)).map(Math.round);
+  const R=2,off=Array(n).fill(-R); let best=null,bd=Infinity;
+  (function rec(i){
+    if(i===n){
+      const v=comb(c.map((x,k)=>x+off[k]),B),d=norm(v.map((x,t)=>x-q[t]));
+      if(d<bd-1e-12){bd=d;best=v;}
+      return;
+    }
+    for(let x=-R;x<=R;x++){off[i]=x;rec(i+1);}
+  })(0);
+  return best;
+}
+
 /* ---------- parsing & inputs ---------- */
 function parseExpr(str){
   const s=String(str).trim().replace(/sqrt/g,'Math.sqrt').replace(/pi/gi,'Math.PI');
@@ -188,6 +213,24 @@ function buildInputs(){
       inp.addEventListener('input',onEdit); g.append(inp); inputs[i][j]=inp;
     }
   }
+  buildQ();
+}
+function buildQ(){
+  const g=$('#qgrid'); g.innerHTML=''; qInputs=[];
+  g.style.gridTemplateColumns='auto repeat('+dim+',1fr)';
+  const ax=['x','y','z'];
+  const lab=document.createElement('div'); lab.className='lab'; lab.innerHTML='<span class="sw" style="background:var(--q)"></span>q'; g.append(lab);
+  for(let j=0;j<dim;j++){
+    const inp=document.createElement('input'); inp.type='text'; inp.title=ax[j]; inp.setAttribute('aria-label','q '+ax[j]);
+    inp.addEventListener('input',onQEdit); g.append(inp); qInputs[j]=inp;
+  }
+  qv=Q_DEFAULT[dim].slice(); setQInputs();
+}
+function setQInputs(){ qInputs.forEach((inp,j)=>{inp.value=fmt(qv[j]);inp.classList.remove('bad');}); }
+function onQEdit(){
+  const v=qInputs.map(inp=>parseExpr(inp.value));
+  qInputs.forEach((inp,j)=>inp.classList.toggle('bad',isNaN(v[j])));
+  if(v.every(x=>!isNaN(x))){ qv=v; update(); }
 }
 function setInputs(M){ M.forEach((r,i)=>r.forEach((x,j)=>{inputs[i][j].value=fmt(x);inputs[i][j].classList.remove('bad');})); }
 function onEdit(){
@@ -206,10 +249,10 @@ function buildPresets(){
 }
 
 /* ---------- properties ---------- */
-let lastShort=null,lastRed=null;
+let lastShort=null,lastRed=null,lastCv=null;
 function update(){
   const d=det(basis); const deg=Math.abs(d)<1e-10;
-  lastRed=null;lastShort=null;
+  lastRed=null;lastShort=null;lastCv=null;
   let h='';
   h+='det B = <code>'+fmt(d)+'</code>  →  covolume <code>'+fmt(Math.abs(d))+'</code><br>';
   h+='|b<sub>i</sub>| = '+basis.map(v=>'<code>'+fmt(norm(v))+'</code>').join(', ')+'<br>';
@@ -225,6 +268,10 @@ function update(){
     h+='Reduced basis (LLL): '+lastRed.map(v=>'<code>('+v.map(fmt).join(', ')+')</code>').join(' ')+'<br>';
     lastShort=shortest(lastRed);
     h+='<span class="sw" style="background:var(--sv)"></span>Shortest vector: <code>('+lastShort.map(fmt).join(', ')+')</code>, length <code>'+fmt(norm(lastShort))+'</code>';
+    if($('#oQ').checked){
+      lastCv=closest(lastRed,qv);
+      h+='<br><span class="sw" style="background:var(--cl)"></span>Closest vector to q: <code>('+lastCv.map(fmt).join(', ')+')</code>, distance <code>'+fmt(norm(lastCv.map((x,t)=>x-qv[t])))+'</code>';
+    }
     const dd=det(lastRed); const hf=Math.pow(Math.abs(d)/ (dim===2?1:1),0); void hf;
   }
   $('#info').innerHTML=h;
@@ -247,6 +294,21 @@ function arrow(x0,y0,x1,y1,color,w,dashed){
   ctx.beginPath(); ctx.moveTo(x1,y1);
   ctx.lineTo(x1-L*Math.cos(a-0.4),y1-L*Math.sin(a-0.4));
   ctx.lineTo(x1-L*Math.cos(a+0.4),y1-L*Math.sin(a+0.4)); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function drawCvp(pq,pc,rad){
+  // pq: screen pos of q, pc: screen pos of closest lattice vector, rad: distance in px (2D only)
+  ctx.save();
+  if(rad){ ctx.strokeStyle=css('--q'); ctx.globalAlpha=.5; ctx.lineWidth=1.25; ctx.setLineDash([3,4]);
+    ctx.beginPath(); ctx.arc(pq[0],pq[1],rad,0,6.2832); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1; }
+  if(pc){
+    ctx.strokeStyle=css('--cl'); ctx.lineWidth=2.5; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(pq[0],pq[1]); ctx.lineTo(pc[0],pc[1]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=css('--cl'); ctx.beginPath(); ctx.arc(pc[0],pc[1],6,0,6.2832); ctx.fill();
+  }
+  const r=7; ctx.fillStyle=css('--q'); ctx.strokeStyle=css('--bg'); ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pq[0],pq[1]-r); ctx.lineTo(pq[0]+r,pq[1]); ctx.lineTo(pq[0],pq[1]+r); ctx.lineTo(pq[0]-r,pq[1]); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.font='bold 13px system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='bottom'; ctx.fillText('q',pq[0]+r+2,pq[1]-r+2);
+  ctx.restore();
 }
 function draw(){ dim===2?draw2():draw3(); }
 
@@ -315,6 +377,10 @@ function draw2(){
     const p=T(lastShort[0],lastShort[1]); arrow(ox,oy,p[0],p[1],css('--sv'),3);
     ctx.fillStyle=css('--sv'); ctx.beginPath(); ctx.arc(p[0],p[1],5,0,6.2832); ctx.fill();
   }
+  if($('#oQ').checked){
+    const pq=T(qv[0],qv[1]),pc=lastCv?T(lastCv[0],lastCv[1]):null;
+    drawCvp(pq,pc,lastCv?norm(lastCv.map((x,t)=>x-qv[t]))*s:0);
+  }
 }
 
 function draw3(){
@@ -356,6 +422,7 @@ function draw3(){
     const p=proj(lastShort); arrow(O[0],O[1],p[0],p[1],css('--sv'),3);
     ctx.fillStyle=css('--sv'); ctx.beginPath(); ctx.arc(p[0],p[1],5,0,6.2832); ctx.fill();
   }
+  if($('#oQ').checked) drawCvp(proj(qv),lastCv?proj(lastCv):null,0);
   if(Math.abs(det(basis))<1e-10) msg.textContent='Basis is linearly dependent — points lie in a lower-dimensional lattice.';
 }
 
@@ -370,9 +437,21 @@ function fitView(){
 
 /* ---------- events ---------- */
 let drag=null;
-cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);});
+function canvasToWorld(e){
+  const r=cv.getBoundingClientRect();
+  return [(e.clientX-r.left-r.width/2-view.px)/view.scale,-(e.clientY-r.top-r.height/2-view.py)/view.scale];
+}
+cv.addEventListener('pointerdown',e=>{
+  drag={x:e.clientX,y:e.clientY};
+  if(dim===2 && $('#oQ').checked){
+    const w=canvasToWorld(e); if(Math.hypot(w[0]-qv[0],w[1]-qv[1])*view.scale<14) drag.q=true;
+  }
+  cv.setPointerCapture(e.pointerId);
+});
 cv.addEventListener('pointermove',e=>{
-  if(!drag) return; const dx=e.clientX-drag.x,dy=e.clientY-drag.y; drag={x:e.clientX,y:e.clientY};
+  if(!drag) return;
+  if(drag.q){ const w=canvasToWorld(e); qv=[Math.round(w[0]*1000)/1000,Math.round(w[1]*1000)/1000]; setQInputs(); update(); return; }
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y; drag={x:e.clientX,y:e.clientY};
   if(dim===2){view.px+=dx;view.py+=dy;}
   else{rot.yaw+=dx*0.008;rot.pitch=Math.max(-1.5,Math.min(1.5,rot.pitch+dy*0.008));}
   draw();
@@ -389,6 +468,7 @@ cv.addEventListener('wheel',e=>{
 },{passive:false});
 
 ['oPts','oLines','oNums','oCell','oBasis','oRed','oSv'].forEach(id=>$('#'+id).addEventListener('change',draw));
+$('#oQ').addEventListener('change',()=>{$('#qWrap').style.display=$('#oQ').checked?'block':'none';update();});
 $('#nRange').addEventListener('input',e=>{$('#nVal').textContent=e.target.value;$('#nVal2').textContent=e.target.value;draw();});
 $('#fit').addEventListener('click',()=>{fitView();rot.yaw=-0.6;rot.pitch=0.45;draw();});
 $('#preset').addEventListener('change',e=>loadPreset(+e.target.value));

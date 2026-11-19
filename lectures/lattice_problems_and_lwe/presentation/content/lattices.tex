@@ -144,7 +144,24 @@
         \end{column}
     \end{columns}
     \note{
-        Beide Basen erzeugen dasselbe Gitter: $\mathbf{b}_1' = 3\mathbf{b}_1 + \mathbf{b}_2$, $\mathbf{b}_2' = 2\mathbf{b}_1 + \mathbf{b}_2$ (Determinante der Koeffizienten: 1).
+        Beide Basen erzeugen dasselbe Gitter: $\mathbf{b}_1' = 3\mathbf{b}_1 + \mathbf{b}_2$, $\mathbf{b}_2' = 2\mathbf{b}_1 + \mathbf{b}_2$ (Determinante der Koeffizienten: 1).\newline
         Eine gute Basis kann einige Berechnungen stark vereinfachen, eine schlechte Basis dieselbe Berechnung fast unmöglich machen.
+    }
+\end{frame}
+
+\begin{frame}{Gute Basis: 90 und 270 Grad}
+    \includegraphics[width=\textwidth]{../assets/lattice_tool_good_basis.png}
+    \note{
+        Gute Basis: Vektoren haben einen Winkel nahe 90 und 270 Grad\newline
+        Orthogonale (am besten orthonormale) Vektoren\newline
+    }
+\end{frame}
+
+\begin{frame}{Schlechte Basis: nahe 0, 180, 360 Grad}
+    \includegraphics[width=\textwidth]{../assets/lattice_tool_bad_basis.png}
+    \note{
+        Schlechte Basis: Vektoren haben einen Winkel nahe 0, 180, 360 Grad\newline
+        Fast parallele oder antiparallele Vektoren. Sie sind “beinahe linear abhängig”\newline
+        Falls der Winkel zwischen den Vektoren aber genau 0, 180 oder 360 Grad entspricht sind diese linear abhängig und bilden keine Basis für ein Gitter!
     }
 \end{frame}

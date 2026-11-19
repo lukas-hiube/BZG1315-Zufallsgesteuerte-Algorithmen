@@ -1,0 +1,73 @@
+\begin{frame}{Beispiel für ein einfaches Gitterproblem}
+    \textbf{Problemstellung:}
+    \begin{itemize}
+        \item Sei $\mathbf{g}_1, \dots, \mathbf{g}_k \in \mathbb{R}^n$ ein Set von Vektoren welche das Gitter $\mathcal{L}$ generieren
+        \item Berechne eine Basis von $\mathbf{b}_1, \dots, \mathbf{b}_m \in \mathbb{R}^n$ von $\mathcal{L}$
+        \item Bestimme, ob ein beliebiger Vektor ein Element vom Gitter $\mathcal{L}$ ist
+    \end{itemize}
+    \textbf{Lösungsansatz:}
+    \begin{itemize}
+        \item Basismatrix $\mathbf{B}$ mit dem Gauss-Algorithmus aus den $\mathbf{g}_i$ berechnen
+        \item Das lineare Gleichungssystem lösen
+        \item Der Vektor $\mathbf{c}$ ist genau dann ein Element von $\mathcal{L}$, wenn $\mathbf{x} \in \mathbb{Z}^m$ ist (alle Einträge ganzzahlig)
+    \end{itemize}
+    \note{
+        Wieso ist das so? Das Gitter $\mathcal{L}$ besteht per Definition genau aus allen ganzzahligen Linearkombinationen der Basisvektoren,
+        also $\mathcal{L} = \{\mathbf{B}\mathbf{x} : \mathbf{x} \in \mathbb{Z}^m\}$.
+        Ein Vektor $\mathbf{c}$ liegt also genau dann im Gitter, wenn es ganzzahlige Koeffizienten $x_i$ gibt mit $\mathbf{c} = \mathbf{B}\mathbf{x}$.\newline
+        \newline
+        Nur wenn Fragen auftauchen:\newline
+        Da die Basisvektoren linear unabhängig sind, hat das Gleichungssystem $\mathbf{B}\mathbf{x} = \mathbf{c}$ höchstens eine Lösung (über $\mathbb{R}$).
+        Es gibt also keine andere Darstellung von $\mathbf{c}$, die ganzzahlig sein könnte, falls die berechnete Lösung nicht ganzzahlig ist.
+        Ist $\mathbf{x}$ ganzzahlig, gilt $\mathbf{c} \in \mathcal{L}$, sonst $\mathbf{c} \notin \mathcal{L}$.\newline
+    }
+\end{frame}
+
+\begin{frame}{Einfaches Gitterproblem: Beispiel mit Lösung}
+    \textbf{Gegeben:}
+    \[
+        \mathbf{g}_1 = \begin{pmatrix} 2 \\ 0 \end{pmatrix},\;
+        \mathbf{g}_2 = \begin{pmatrix} 1 \\ 2 \end{pmatrix},\;
+        \mathbf{g}_3 = \begin{pmatrix} 3 \\ 2 \end{pmatrix}
+        \qquad
+        \qquad
+        \mathbf{c}_1 = \begin{pmatrix} 5 \\ 2 \end{pmatrix},\;
+        \mathbf{c}_2 = \begin{pmatrix} 4 \\ 2 \end{pmatrix}
+    \]
+    \textbf{Lösung:}
+    \begin{itemize}
+        \item Basis: $\mathbf{g}_3 = \mathbf{g}_1 + \mathbf{g}_2$ ist linear abhängig, also weglassen:
+        $\mathbf{B} = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$
+        \item $\mathbf{c}_1$: $x_2 = 1$, $x_1 = 2$ \qquad also $\mathbf{x} = \begin{pmatrix} 2 \\ 1 \end{pmatrix} \in \mathbb{Z}^2$ \; $\Rightarrow$ $\mathbf{c}_1 \in \mathcal{L}$
+        \item $\mathbf{c}_2$: $x_2 = 1$, $x_1 = \tfrac{3}{2}$ \qquad also $\mathbf{x} \notin \mathbb{Z}^2$ \; $\Rightarrow$ $\mathbf{c}_2 \notin \mathcal{L}$
+    \end{itemize}
+    \note{
+        Laufzeit: Das Verfahren ist polynomiell, bei $k \approx n$ Erzeugern etwa $O(n^3)$ (Basisberechnung dominiert, Gleichungssystem lösen ist $O(n \cdot m^2)$).\newline
+    }
+\end{frame}
+
+\begin{frame}{Shortest Vector Problem (SVP)~\textendash~... des kürzesten Vektors}
+    \includegraphics[width=\textwidth]{../assets/lattice_tool_shortest_vector_problem.png}
+\end{frame}
+
+\begin{frame}{Shortest Vector Problem (SVP): Definition}
+    \begin{definition}[Shortest Vector Problem (SVP)]
+        Let $\mathcal{L}$ be a lattice with some basis $\mathbf{B} \in \mathbb{R}^{n \times m}$ and some norm $\|\cdot\|$. Let $\lambda(\mathcal{L})$ be
+        the length of the shortest nonzero vector in $\mathcal{L}$. The task of finding $\mathbf{l} \in \mathcal{L}$ such that
+        $\|\mathbf{l}\| = \lambda(\mathcal{L})$, i.e. finding any shortest vector of $\mathcal{L}$, is called
+        \textit{shortest vector problem (SVP)}.
+    \end{definition}
+\end{frame}
+
+\begin{frame}{Closest Vector Problem (CVP)~\textendash~... des nächstgelegenen Vektors}
+    \includegraphics[width=\textwidth]{../assets/lattice_tool_closest_vector_problem.png}
+\end{frame}
+
+\begin{frame}{Closest Vector Problem (CVP): Definition}
+    \begin{definition}[Closest Vector Problem (CVP)]
+        Let $\mathcal{L}$ be a lattice with some basis $\mathbf{B} \in \mathbb{R}^{n \times m}$ and some norm $\|\cdot\|$. Given $\mathbf{q} \in \mathbb{R}^n$,
+        the task of finding $\mathbf{l} \in \mathcal{L}$ such that $\|\mathbf{l} - \mathbf{q}\|$ is minimal, i.e. finding the lattice vector
+        $\mathbf{l}$ closest to a given arbitrary vector, is called
+        \textit{closest vector problem (CVP)}.
+    \end{definition}
+\end{frame}

@@ -1,11 +1,21 @@
-\begin{frame}{Definition Gitter (Lattices)}
-    \begin{definition}[Gitter]
-        Sei $B = \{\mathbf{b}_1, \mathbf{b}_2, \dots, \mathbf{b}_m\}$ eine Menge linear unabhängiger Vektoren aus dem euklidischen Vektorraum $\mathbb{R}^n$. Dann heisst die Menge aller ganzzahligen Linearkombinationen
+\begin{frame}{Ein einfaches Gitter Visualisiert}
+    \includegraphics[width=\textwidth]{../assets/lattice_tool_simple_2d_lattice.png}
+    \note{
+        Gitter sind interessant im kryptografischen Kontext, weil ein Gitter verschiedene Basen haben kann (verschiedene "Beschreibungen" des Gitters).\newline
+        \newline
+        Wobei eine günstige Basis einige Berechnungen stark vereinfachen und eine schlechte Basis dieselbe Berechnung fast unmöglich machen kann.
+    }
+\end{frame}
+
+\begin{frame}{Gitter (Lattices): Definition}
+    \centering
+    \parbox{0.9\textwidth}{
+        Sei $B = \{\mathbf{b}_1, \mathbf{b}_2, \dots, \mathbf{b}_m\}$ eine Menge linear unabhängiger Vektoren aus dem euklidischen Vektorraum $\mathbb{R}^n$. Dann heisst die Menge aller ganzzahligen Linearkombinationen\newline
         \[
             \mathcal{L}(B) = \left\{ \sum_{i=1}^{m} a_i \mathbf{b}_i \;\middle|\; a_i \in \mathbb{Z} \right\} \subseteq \mathbb{R}^n
-        \]
+        \]\newline
         das von $B$ erzeugte \textbf{Gitter} in $\mathbb{R}^n$. $B$ nennen wir die \textbf{Basis} des Gitters $\mathcal{L}$.
-    \end{definition}
+    }
 \end{frame}
 
 \begin{frame}{Auffrischung: Euklidische Vektorräume}
@@ -109,11 +119,11 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Lattice Visualizer (Vibe Coded Tool)}
+\begin{frame}{Gitter als Matritze Visualisiert)}
     \includegraphics[width=\textwidth]{../assets/lattice_tool_simple_2d_lattice.png}
 \end{frame}
 
-\begin{frame}{Basen sind nicht eindeutig}
+\begin{frame}{Eigenschaften von Gittern}
     \begin{columns}[T]
         \begin{column}{0.5\textwidth}
             \begin{itemize}

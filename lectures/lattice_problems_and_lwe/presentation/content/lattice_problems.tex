@@ -48,26 +48,54 @@
 
 \begin{frame}{Shortest Vector Problem (SVP)~\textendash~... des kürzesten Vektors}
     \includegraphics[width=\textwidth]{../assets/lattice_tool_shortest_vector_problem.png}
+    \note{
+        Vereinfacht gesagt beschreibt das Problem des kürzesten Vektors (kurz SVP) die Suche nach dem Vektor mit der kürzesten Distanz zum Nullpunkt/Uhrsprung.
+    }
 \end{frame}
 
 \begin{frame}{Shortest Vector Problem (SVP): Definition}
-    \begin{definition}[Shortest Vector Problem (SVP)]
-        Let $\mathcal{L}$ be a lattice with some basis $\mathbf{B} \in \mathbb{R}^{n \times m}$ and some norm $\|\cdot\|$. Let $\lambda(\mathcal{L})$ be
-        the length of the shortest nonzero vector in $\mathcal{L}$. The task of finding $\mathbf{l} \in \mathcal{L}$ such that
-        $\|\mathbf{l}\| = \lambda(\mathcal{L})$, i.e. finding any shortest vector of $\mathcal{L}$, is called
-        \textit{shortest vector problem (SVP)}.
-    \end{definition}
+    \begin{itemize}
+        \item Sei $\mathcal{L}$ ein Gitter mit einer Basis $\mathbf{B} \in \mathbb{R}^{n \times m}$ und einer Norm $\|\cdot\|$.
+        \item Sei $\lambda(\mathcal{L})$ die Länge des kürzesten Vektors ungleich null in $\mathcal{L}$.
+        \item Die Aufgabe, ein $\mathbf{l} \in \mathcal{L}$ zu finden mit $\|\mathbf{l}\| = \lambda(\mathcal{L})$, also irgendeinen kürzesten Vektor von $\mathcal{L}$ zu finden, heisst \textit{Shortest Vector Problem (SVP)}.
+    \end{itemize}
+    \vspace{2em}
+    {\setbeamerfont{itemize/enumerate body}{size=\footnotesize}
+    \begin{itemize}
+        \item NP-Schwer: z.B. Enumeration $2^{O(n \log n)}$
+        \item LLL findet in polynomieller Zeit ein Resultat, dass max. $2^{O(n)}$ zu lang ist
+    \end{itemize}
+    }
+    \note{
+        SVP ist NP-schwer und die bepolynomiellersten exakten Algorithmen brauchen exponentielle Zeit in der Dimension $n$: Also etwas in der Form $2^{O(n \log n)}$, z.B. für die Enumeration.\newline
+        \newline
+        In polynomieller Zeit ist nur eine Näherung möglich: LLL findet einen Vektor, der höchstens um einen Faktor $2^{O(n)}$ länger ist als der kürzeste.
+    }
 \end{frame}
 
 \begin{frame}{Closest Vector Problem (CVP)~\textendash~... des nächstgelegenen Vektors}
     \includegraphics[width=\textwidth]{../assets/lattice_tool_closest_vector_problem.png}
+    \note{
+        Die Suche nach dem Vektor mit der kürzesten Distanz zu einem beliebig gewählten Punkt nennt man das Problem des nächstgelegenen Vektors (kurz CVP).
+    }
 \end{frame}
 
 \begin{frame}{Closest Vector Problem (CVP): Definition}
-    \begin{definition}[Closest Vector Problem (CVP)]
-        Let $\mathcal{L}$ be a lattice with some basis $\mathbf{B} \in \mathbb{R}^{n \times m}$ and some norm $\|\cdot\|$. Given $\mathbf{q} \in \mathbb{R}^n$,
-        the task of finding $\mathbf{l} \in \mathcal{L}$ such that $\|\mathbf{l} - \mathbf{q}\|$ is minimal, i.e. finding the lattice vector
-        $\mathbf{l}$ closest to a given arbitrary vector, is called
-        \textit{closest vector problem (CVP)}.
-    \end{definition}
+    \begin{itemize}
+        \item Sei $\mathcal{L}$ ein Gitter mit einer Basis $\mathbf{B} \in \mathbb{R}^{n \times m}$ und einer Norm $\|\cdot\|$ (Vektorlänge, üblicherweise die Euklidische Norm $\|\mathbf{v}\| = \sqrt{v_1^2 + \dots + v_n^2}$).
+        \item Gegeben sei ein $\mathbf{q} \in \mathbb{R}^n$.
+        \item Die Aufgabe, ein $\mathbf{l} \in \mathcal{L}$ zu finden, für das $\|\mathbf{l} - \mathbf{q}\|$ minimal ist, also den Gittervektor $\mathbf{l}$ zu finden, der einem beliebig vorgegebenen Vektor am nächsten liegt, heisst \textit{Closest Vector Problem (CVP)}.
+    \end{itemize}
+    \vspace{2em}
+    {\setbeamerfont{itemize/enumerate body}{size=\footnotesize}
+    \begin{itemize}
+        \item NP-Schwer: mindestens so schwer wie SVP
+        \item Babai-Algorithmus findet in polynomieller Zeit ein Resultat, dass max. $2^{O(n)}$ zu lang ist
+    \end{itemize}
+    }
+    \note{
+        Zur Geschätzte Laufzeit: CVP ist NP-schwer und gilt als mindestens so schwer wie SVP.\newline
+        \newline
+        In polynomieller Zeit geht nur eine Näherung, z.B. der Babai-Algorithmus auf einer LLL-reduzierten Basis mit einem Faktor $2^{O(n)}$.
+    }
 \end{frame}

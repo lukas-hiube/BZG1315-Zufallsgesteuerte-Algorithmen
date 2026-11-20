@@ -1,5 +1,0 @@
-\beamer@sectionintoc {1}{Einführung in Gitter (Lattices)}{5}{0}{1}
-\beamer@sectionintoc {2}{Gitterprobleme}{15}{0}{2}
-\beamer@sectionintoc {3}{LWE (Learning with errors)}{22}{0}{3}
-\beamer@sectionintoc {4}{Verschlüsselungssysteme: LWE \& Gitterproblem}{23}{0}{4}
-\beamer@sectionintoc {5}{Zusammenfassung \& Ausblick}{24}{0}{5}

@@ -1,0 +1,171 @@
+\begin{frame}{Auffrischung: Ring}
+    \begin{itemize}
+        \item Ein \textbf{Ring} ist eine Menge $R$ mit Addition $+$ und Multiplikation $\cdot$
+        \item Addieren, subtrahieren und multiplizieren ist immer möglich (mit $0$, $1$ und Gegenelementen)
+        \item Distributivgesetz: $a \cdot (b + c) = a \cdot b + a \cdot c$
+        \item Division ist nicht immer möglich (sonst wäre es ein Körper)
+        \item \textbf{Beispiele:}
+        \begin{itemize}
+            \item die ganzen Zahlen $\mathbb{Z}$
+            \item $\mathbb{Z}_q$: ganze Zahlen modulo $q$, wie eine Uhr mit $q$ Stunden, z.B. in $\mathbb{Z}_7$ gilt $5 + 4 = 2$
+        \end{itemize}
+    \end{itemize}
+    \note{
+        Für LWE ist der Ring $\mathbb{Z}_q$ wichtig: Man rechnet mit ganzen Zahlen und nimmt nach jeder Operation den Rest modulo $q$.\newline
+        \newline
+        Ring vs. Gruppe: Eine Gruppe hat nur \emph{eine} Operation (z.B. $+$) mit neutralem Element und Inversen.
+        Ein Ring hat zwei: $(R, +)$ ist eine kommutative Gruppe, dazu kommt die Multiplikation, verbunden über das Distributivgesetz.
+        Im Ring gibt es nicht zu jedem Element ein multiplikatives Inverses, deshalb ist Division nicht immer möglich.\newline
+        \newline
+        Körper vs. Ring: Jeder Körper ist ein Ring, in dem zusätzlich jedes Element außer $0$ ein multiplikatives Inverses hat. Beispiele: $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{Z}_p$ für eine Primzahl $p$.
+        $\mathbb{Z}$ ist ein Ring, aber kein Körper. Also: Gruppe $\leftarrow$ Ring $\leftarrow$ Körper.
+    }
+\end{frame}
+
+\begin{frame}{Einführung in Learning with Errors (LWE)}
+    Sei $\mathbb{Z}_q = \mathbb{Z}/q\mathbb{Z}$ der Ring der ganzen Zahlen modulo $q$, also die Menge der ganzen Zahlen kleiner
+    als $q$ mit den Operationen $+$ und $\cdot$ modulo $q$.\newline
+    Als lineares Gleichungssystem:
+    \[
+        \mathbf{A} \cdot \mathbf{s} = \mathbf{b},
+    \]
+    wobei $\mathbf{A} \in \mathbb{Z}_q^{n \times m}$, $\mathbf{s} \in \mathbb{Z}_q^{m}$ und $\mathbf{b} \in \mathbb{Z}_q^{n}$.
+    \newline
+    \newline
+    \centering
+    Zum Beispiel:
+    \[
+        \underbrace{\begin{pmatrix}
+            10 & 3 & 5 & 1 \\
+            4  & 1 & 1 & 2 \\
+            \vdots & \vdots & \vdots & \vdots \\
+            3  & 1 & 1 & 5
+        \end{pmatrix}}_{\mathbf{A}}
+        \cdot
+        \underbrace{\begin{pmatrix}
+            s_1 \\ s_2 \\ s_3 \\ s_4
+        \end{pmatrix}}_{\mathbf{s}}
+        =
+        \underbrace{\begin{pmatrix}
+            10 \\ 3 \\ \vdots \\ 8
+        \end{pmatrix}}_{\mathbf{b}}
+    \]
+    \note{
+
+    }
+\end{frame}
+
+\begin{frame}{Einführung in Learning with Errors (LWE)}
+    Als Gleichungssystem:
+    \begin{align*}
+        10 \cdot s_1 + 3 \cdot s_2 + 5 \cdot s_3 + 1 \cdot s_4 &= 10 \\
+        4 \cdot s_1 + 1 \cdot s_2 + 1 \cdot s_3 + 2 \cdot s_4 &= 3 \\
+        &\;\;\vdots \\
+        3 \cdot s_1 + 1 \cdot s_2 + 1 \cdot s_3 + 5 \cdot s_4 &= 8
+    \end{align*}
+
+    Fügt man kleine Fehlerwerte $\mathbf{e} \in \mathbb{Z}_q^{n}$ ein, erhält man
+    \[
+        \mathbf{A} \cdot \mathbf{s} + \mathbf{e} = \mathbf{b},
+    \]
+    was das Lösen des Gleichungssystems überraschend schwer macht.
+    \note{
+        Dies liegt an der Verbindung zu den oben beschriebenen schweren Gitterproblemen.
+    }
+\end{frame}
+
+\begin{frame}{Decisional LWE (dLWE)}
+    \[
+        \mathbf{A} \cdot \mathbf{s} + \mathbf{e} = \mathbf{b},
+    \]
+    \begin{itemize}
+        \item Das LWE-Problem kann als Entscheidungsproblem ausgelegt werden
+        \item Gegeben ist eine LWE-Aufgabe $(\mathbf{A}, \mathbf{b})$, wobei $\mathbf{s}$ und $\mathbf{e}$ geheim sind
+        \item {
+            Die Aufgabe ist es zu erraten, ob die Werte von $\mathbf{b}$ (gleich schwer)
+            \begin{itemize}
+                \item als $\mathbf{A} \cdot \mathbf{s} + \mathbf{e}$ berechnet wurden
+                \item oder zufällig gewählt wurden
+            \end{itemize}
+        }
+        \item Odded Regev hat die Reduktion von LWE auf dLWE bewiesen
+    \end{itemize}
+    \note{
+        Warum ist das relevant? Bei einem Verschlüsselungssystem reicht es nicht, dass der Angreifer das Secret nicht finden kann.
+        Der Chiffretext darf ihm auch sonst keine Information über die Nachricht verraten. Ein Chiffretext, der sich von Zufall nicht unterscheiden lässt, verrät nichts.\newline
+        \newline
+        Wie zeigt das die Sicherheit? Ist dLWE schwer, sind echte LWE-Daten $(\mathbf{A}, \mathbf{b})$ von rein zufälligen Daten nicht zu unterscheiden.
+        Verschlüsselt man ein Bit, sieht der Chiffretext deshalb für einen Angreifer wie Zufall aus, egal ob eine 0 oder eine 1 darin steckt.
+        Könnte er trotzdem das Bit erkennen, hätte er damit dLWE gelöst (Sicherheitsbeweis durch Reduktion).\newline
+        \newline
+        Weil LWE und dLWE gleich schwer sind (Regev), reicht es, die Schwere von LWE anzunehmen.
+    }
+\end{frame}
+
+\begin{frame}{Verbindung zwischen LWE und Gitterproblemen: CVP}
+    \[
+        \mathbf{A} \cdot \mathbf{s} + \mathbf{e} = \mathbf{b},
+    \]
+    \begin{itemize}
+       \item $\mathbf{A} \in \mathbb{Z}_q^{n \times m}$, $\mathbf{b} \in \mathbb{Z}_q^{n}$ und $\mathbf{s} \in \mathbb{Z}_q^{m}$, $\mathbf{e} \in \mathbb{Z}_q^{n}$ sind kleine Vektoren
+       \item Eine konkrete LWE-Instanz lässt sich lösen, indem man das Closest Vector Problem löst
+       \item Der nächstgelegene Gittervektor zu $\mathbf{b}$ ist fast immer der Gittervektor $\mathbf{A} \cdot \mathbf{s}$ mit Abstand $\mathbf{e}$
+    \end{itemize}
+    \note{
+        Warum führt das auf CVP? Alle ganzzahligen Linearkombinationen der Spalten von $\mathbf{A}$ (modulo $q$) bilden ein Gitter. $\mathbf{A} \cdot \mathbf{s}$ ist ein Punkt dieses Gitters.
+        Der Vektor $\mathbf{b} = \mathbf{A} \cdot \mathbf{s} + \mathbf{e}$ liegt aber leicht daneben, nämlich um den kleinen Fehler $\mathbf{e}$.
+        Den Gitterpunkt zu finden, der $\mathbf{b}$ am nächsten liegt, ist genau das Closest Vector Problem. Weil $\mathbf{e}$ klein ist, ist dieser Punkt meistens $\mathbf{A} \cdot \mathbf{s}$, und daraus lässt sich $\mathbf{s}$ berechnen.
+    }
+\end{frame}
+
+\begin{frame}{Verbindung zwischen LWE und Gitterproblemen: SVP}
+    Sei $\mathcal{L}$ ein Gitter, $\parallel$ die Konkatenation und $\mathbf{I}_n$ die $n \times n$-Einheitsmatrix
+    \[
+        \mathcal{L} = \{\mathbf{x} \in \mathbb{Z}^{m+n+1} \mid (\mathbf{A} \parallel \mathbf{I}_n \parallel (-\mathbf{b})) \cdot \mathbf{x} = \mathbf{0} \bmod q\},
+    \]
+    Der Spaltenvektor $(\mathbf{s}, \mathbf{e}, 1)$ ist ein Element von $\mathcal{L}$, denn
+    \[
+        \begin{pmatrix} \mathbf{A} & \mathbf{I}_n & -\mathbf{b} \end{pmatrix}
+        \cdot
+        \begin{pmatrix} \mathbf{s} \\ \mathbf{e} \\ 1 \end{pmatrix}
+        = \mathbf{A} \cdot \mathbf{s} + \mathbf{e} - \mathbf{b} = \mathbf{b} - \mathbf{b} = \mathbf{0} \bmod q.
+    \]
+    \note{
+        Warum ist $(\mathbf{s}, \mathbf{e}, 1)$ ein kürzester Vektor? $\mathbf{s}$ und $\mathbf{e}$ sind klein, die letzte Komponente ist $1$, der Vektor ist also sehr kurz.
+        Die meisten anderen Gittervektoren von $\mathcal{L}$ haben dagegen Einträge in der Grössenordnung von $q$ und sind deutlich länger.\newline
+        \newline
+        $(\mathbf{s}, \mathbf{e}, 1)$ ist sogar ein kürzester Vektor in $\mathcal{L}$, also eine SVP-Lösung für $\mathcal{L}$.
+        Findet man ihn, erhält man direkt das Secret $\mathbf{s}$ und den Fehlervektor $\mathbf{e}$ und löst damit das LWE-System.
+    }
+\end{frame}
+
+\begin{frame}{Verschlüsselung mit LWE: Grundidee}
+    \begin{itemize}
+        \item \textbf{Private Key:} das geheime Secret $\mathbf{s}$
+        \item \textbf{Public Key:} viele verrauschte Gleichungen $(\mathbf{A}, \mathbf{b})$ mit $\mathbf{b} = \mathbf{A} \cdot \mathbf{s} + \mathbf{e}$
+        \item {
+            \textbf{Encrypt:} 1 Bit mit zufällige Gleichungen aufsummieren ergibt $\mathbf{u}$ und $v$
+            \begin{itemize}
+                \item Bit = 0: $(\mathbf{u}, v)$ unverändert senden
+                \item Bit = 1: zusätzlich $\lfloor q/2 \rfloor$ zu $v$ addieren
+            \end{itemize}
+        }
+        \item {
+            \textbf{Decrypt:} $r = v - \langle \mathbf{u}, \mathbf{s} \rangle$ mit dem Secret berechnen
+            \begin{itemize}
+                \item $r$ nahe bei $0$: Bit = 0
+                \item $r$ nahe bei $q/2$: Bit = 1
+            \end{itemize}
+        }
+        \item \textbf{Sicherheit:} ohne $\mathbf{s}$ wirkt der Chiffretext $(\mathbf{u}, v)$ zufällig (dLWE)
+    \end{itemize}
+    \note{
+        Der Fehler muss klein genug sein, damit sich die Fehler der ausgewählten Gleichungen nicht zu stark addieren und das Bit sicher erkannt wird.\newline
+        \newline
+        Beim Entschlüsseln bleibt für $\mu = 0$ nur die kleine Summe der Fehler $e_i$ der ausgewählten Gleichungen übrig, für $\mu = 1$ kommt $\lfloor q/2 \rfloor$ dazu.\newline
+        \newline
+        Ein Angreifer ohne Secret müsste ein Gitterproblem lösen.\newline
+        \newline
+        Für längere Nachrichten wird die Nachricht Bit für Bit verschlüsselt.
+    }
+\end{frame}

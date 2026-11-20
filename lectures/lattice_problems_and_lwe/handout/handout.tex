@@ -1,19 +1,147 @@
-%! Author = lukas
-%! Date = 11/10/26
+%============================ MAIN DOCUMENT ================================
+% define document class
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[
+    a4paper,
+    BCOR=15mm,            % Binding correction
+    twoside=false,        % twoside true for spare page
+    open=any,             % page can start on even or uneven pages
+% openright,
+%  headings=openright,
+    bibliography=totoc,   % If enabled add bibliography to TOC
+    listof=totoc,         % If enabled add lists to TOC
+    monolingual,
+% bilingual,
+    invert-title,
+]{bfhthesis}
 
-% Preamble
-\documentclass[11pt]{article}
+\LoadBFHModule{listings,terminal,boxes}
+%---------------------------------------------------------------------------
+% Documents paths
+%---------------------------------------------------------------------------
+\makeatletter
+\def\input@path{{content/}}
+%or: \def\input@path{{/path/to/folder/}{/path/to/other/folder/}}
+\makeatother
+%-----------------  Base packages     --------------------------------------
+% Include Packages
+\usepackage[french,ngerman,main=english]{babel}  % https://www.namsu.de/Extra/pakete/Babel.html
+%% To disable the french list setting you can add -- see https://gitlab.ti.bfh.ch/bfh-latex/bfh-ci/-/issues/166
+%\frenchsetup{StandardLists=true}
 
-% Packages
-\usepackage{amsmath}
+\usepackage{amsmath}          % various features to facilitate writing math formulas
+\usepackage{amsthm}           % enhanced version of latex's newtheorem
+\usepackage{amsfonts}         % set of miscellaneous TeX fonts that augment the standard CM
+\usepackage{amssymb}          % mathematical special characters
 
-% Document
+\usepackage{siunitx}
+
+\usepackage{graphicx}         % integration of images
+\usepackage{float}            % floating objects
+
+\usepackage{caption}          % for captions of figures and tables
+\usepackage{subcaption}       % for subcaptions in subfigures
+\usepackage{cite}             % use bibtex
+\usepackage{wrapfig}
+
+\usepackage{exscale}          % mathematical size corresponds to textsize
+\usepackage{multirow}         % multirow emables combining rows in tables
+\usepackage{multicol}
+
+\usepackage{longtable}
+
+\usepackage{parskip}
+\usepackage{etoc}
+\usepackage{refcount}
+%---------------------------------------------------------------------------
+% Graphics paths
+%---------------------------------------------------------------------------
+\graphicspath{{pictures/}{figures/}}
+%---------------------------------------------------------------------------
+% Blind text -> for dummy text
+%---------------------------------------------------------------------------
+\usepackage{blindtext}
+\usepackage{letltxmacro}
+\LetLtxMacro{\blindtextblindtext}{\blindtext}
+
+\RenewDocumentCommand{\blindtext}{O{\value{blindtext}}}{
+    \begingroup\color{BFH-Gray}\blindtextblindtext[#1]\endgroup
+}
+%---------------------------------------------------------------------------
+% Makeindex Package
+%---------------------------------------------------------------------------
+\usepackage{makeidx}
+\makeindex
+%---------------------------------------------------------------------------
+% Hyperref Package (Create links in a pdf)
+%---------------------------------------------------------------------------
+\usepackage[
+,bookmarks
+,plainpages=false
+,pdfpagelabels
+,pdfusetitle
+,backref = {false}          % No index backreference
+,colorlinks = {true}        % Color links in a PDF
+,hypertexnames = {true}     % no failures "same page(i)"
+,bookmarksopen = {true}     % opens the bar on the left side
+,bookmarksopenlevel = {0}   % depth of opened bookmarks
+,linkcolor=blue
+,filecolor=.
+,urlcolor=blue
+,citecolor=blue
+]{hyperref}
+\usepackage{glossaries}
+\usepackage{xparse}
+\usepackage{color}
+\usepackage{csquotes}
+\usepackage{todonotes}
+\usepackage{svg}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{pdfpages}
+\usepackage{fontspec}
+\usepackage{textcomp}
+\usepackage{unicode-math}
+\usepackage{nameref}
+\setmonofont{DejaVu Sans Mono}
+\setlength{\emergencystretch}{3em}   % weniger Overfull-hbox-Warnungen
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+%---------------------------------------------------------------------------
+
+%---------------------------------------------------------------------------
 \begin{document}
 
-\section*{Handout}
-In Arbeit.
+%------------ START FRONT PART ------------
+    \frontmatter
 
+    \title{Gitterprobleme \& LWE (Learning with errors)}
+    \subtitle{BZE1315 Zufallsgesteurte Algorithmen - Post-Quanten Kryptographie}
+    \author{Lukas von Allmen (vonal3)}
+    \institution{Bern University of Applied Sciences}
+    \department{Technik und Informatik}
+    \version{1.0}
+    %\titlegraphic*{\includegraphics{../assets/title_graphics.png}}
+    \advisor{Erich Baur}
+    \degreeprogram{Bachelor of Science in Computer Science}
 
+%----------------  BFH tile page   -----------------------------------------
+    \maketitle
 
+%------------ TABLEOFCONTENTS ----------------
+    \tableofcontents
+
+%------------ START MAIN PART ------------
+    \mainmatter
+
+    \selectlanguage{ngerman}
+
+    \input{content/introduction}
+    \input{content/lattices}
+    \input{content/lattice_problems}
+    \input{content/learning_with_errors}
+    \input{content/encryption_scheme}
 
 \end{document}

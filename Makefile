@@ -7,16 +7,18 @@
 # make <lecture>            build handout + presentation of one lecture
 # make <lecture>/<kind>     build a single document, e.g. make lattice_problems_and_lwe/handout
 # make clean                remove out/ contents
-# Options: ENGINE=-lualatex (default -pdf = pdflatex)
+# Engine per document kind: presentation -> pdflatex, handout -> lualatex (fontspec/unicode-math).
+# Override e.g. with: make ENGINE_handout=-xelatex
 
 MAKEFLAGS += --keep-going   # one failing document must not block the others
 
 LECTURES_DIR := lectures
 OUT_DIR      := out
 KINDS        := handout presentation
-ENGINE       ?= -pdf
+ENGINE_presentation ?= -pdf
+ENGINE_handout      ?= -lualatex
 LATEXMK      ?= latexmk
-LATEXMK_FLAGS = $(ENGINE) -interaction=nonstopmode -halt-on-error -shell-escape
+LATEXMK_FLAGS = -interaction=nonstopmode -halt-on-error -shell-escape
 
 ROOT     := $(CURDIR)
 LECTURES := $(sort $(notdir $(patsubst %/,%,$(dir $(wildcard $(LECTURES_DIR)/*/.)))))
@@ -40,7 +42,7 @@ $(OUT_DIR)/%.pdf: FORCE
 	@lecture=$(word 1,$(subst /, ,$*)); kind=$(word 2,$(subst /, ,$*)); \
 	mkdir -p $(ROOT)/$(OUT_DIR)/$$lecture/build/$$kind && \
 	cd $(LECTURES_DIR)/$$lecture/$$kind && \
-	$(LATEXMK) $(LATEXMK_FLAGS) \
+	$(LATEXMK) $(ENGINE_$(word 2,$(subst /, ,$*))) $(LATEXMK_FLAGS) \
 	  -outdir=$(ROOT)/$(OUT_DIR)/$$lecture \
 	  -auxdir=$(ROOT)/$(OUT_DIR)/$$lecture/build/$$kind \
 	  $$kind.tex

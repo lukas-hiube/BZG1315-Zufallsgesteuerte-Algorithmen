@@ -1,0 +1,14 @@
+\chapter{Einleitung}\label{ch:introduction}
+
+\section{Rückblick und Problemstellung}
+Quantencomputer können bestimmte Aufgaben effizienter lösen als klassische Rechner. Mit dem Algorithmus von Shor lassen sich grosse Zahlen in polynomieller Zeit in ihre Primfaktoren zerlegen. Damit können Verschlüsselungssysteme, die auf der Schwierigkeit der Primfaktorzerlegung oder des diskreten Logarithmus beruhen (z.B. RSA und ECC), geknackt werden, sobald ein ausreichend grosser Quantencomputer existiert. Ob Quantencomputer klassischen Rechnern in bestimmten Aufgaben tatsächlich überlegen sind (Quantum Supremacy), ist noch nicht eindeutig bewiesen. Es gibt dafür aber starke Indizien.
+
+Es stellt sich daher die Frage: \emph{Was nun?} Gesucht sind Einwegfunktionen, die auch für Quantencomputer schwer umkehrbar sind.
+
+\section{Quanten-resistente Einwegfunktionen}
+Learning with Errors (LWE) in Kombination mit Gitterproblemen eignet sich dafür. Die Probleme gelten als mutmasslich NP-schwer und quanten-resistent.
+\begin{itemize}
+    \item Odded Regev verwendete LWE 2005 erstmals, um ein quanten-resistentes Verschlüsselungsverfahren zu entwerfen. Dafür erhielt er 2018 den Gödel-Preis.
+    \item Das Projekt Cryptographic Suite for Algebraic Lattices (CRYSTALS) entwickelte daraus \textbf{Kyber} (Verschlüsselung, erstmals 2017 veröffentlicht) und Dilithium (Signaturen).
+    \item Kyber wurde vom NIST standardisiert und 2024 als \textit{Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)} veröffentlicht.
+\end{itemize}

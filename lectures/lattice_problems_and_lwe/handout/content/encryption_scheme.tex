@@ -1,0 +1,22 @@
+\chapter{Verschlüsselung mit LWE}\label{ch:encryption}
+
+Die folgende vereinfachte Grundidee überträgt eine Nachricht aus einem einzelnen Bit $\mu$. Sie lässt sich leicht auf eine Bitfolge beliebiger Länge erweitern, indem man Bit für Bit verschlüsselt.
+
+\begin{description}
+    \item[Private Key:] das geheime Secret $\mathbf{s}$.
+    \item[Public Key:] viele verrauschte Gleichungen $(\mathbf{A}, \mathbf{b})$ mit $\mathbf{b} = \mathbf{A} \cdot \mathbf{s} + \mathbf{e}$.
+    \item[Encrypt:] Man wählt zufällig einige Gleichungen aus dem Public Key aus und summiert sie auf. Das ergibt $\mathbf{u}$ (Summe der gewählten Zeilen von $\mathbf{A}$) und $v$ (Summe der gewählten Einträge von $\mathbf{b}$).
+    \begin{itemize}
+        \item Bit $\mu = 0$: $(\mathbf{u}, v)$ wird unverändert gesendet.
+        \item Bit $\mu = 1$: zusätzlich wird $\lfloor q/2 \rfloor$ zu $v$ addiert.
+    \end{itemize}
+    \item[Decrypt:] Mit dem Secret wird $r = v - \langle \mathbf{u}, \mathbf{s} \rangle$ berechnet.
+    \begin{itemize}
+        \item $r$ nahe bei $0$: $\mu = 0$.
+        \item $r$ nahe bei $q/2$: $\mu = 1$.
+    \end{itemize}
+\end{description}
+
+Beim Entschlüsseln bleibt für $\mu = 0$ nur die kleine Summe der Fehler $e_i$ der ausgewählten Gleichungen übrig, für $\mu = 1$ kommt $\lfloor q/2 \rfloor$ dazu. Der Fehler muss deshalb klein genug sein, damit sich die Fehler der ausgewählten Gleichungen nicht zu stark addieren und das Bit sicher erkannt wird.
+
+\paragraph{Sicherheit.} Ohne $\mathbf{s}$ wirkt der verschlüsselte Text $(\mathbf{u}, v)$ zufällig (dLWE). Ein Angreifer müsste ein Gitterproblem lösen, um an die Nachricht zu kommen.

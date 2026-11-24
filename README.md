@@ -1,6 +1,7 @@
 # BZG1315 Zufallsgesteuerte Algorithmen - Post-Quanten Kryptografie
 
-Lattice Visualizer (GitHub Pages): https://lukas-hiube.github.io/BZG1315-Zufallsgesteuerte-Algorithmen/
+- Repository: https://github.com/lukas-hiube/BZG1315-Zufallsgesteuerte-Algorithmen
+- Lattice Visualizer (GitHub Pages): https://lukas-hiube.github.io/BZG1315-Zufallsgesteuerte-Algorithmen/
 
 Vorträge:
 1. 14.11.26 - 60' - 90': Einführung in Gitterprobleme & LWE

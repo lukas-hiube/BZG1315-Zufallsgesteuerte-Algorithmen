@@ -5,13 +5,11 @@
 
 Vorträge:
 1. 14.11.26 - 60' - 90': Einführung in Gitterprobleme & LWE
+   - [Präsentation](https://lukas-hiube.github.io/BZG1315-Zufallsgesteuerte-Algorithmen/lecture_1_presentation.pdf)
+   - [Handout](https://lukas-hiube.github.io/BZG1315-Zufallsgesteuerte-Algorithmen/lecture_1_handout.pdf)
 2. 01.12.26 - 60' - 90': Verfahren von Regev & Einblick in (Baby)-Kyber
 
 ## Einführung in Gitterprobleme (Lattice Problems) & LWE (Learning with errors)
-
-Dokumente:
-- Präsentation: https://lukas-hiube.github.io/BZG1315-Zufallsgesteuerte-Algorithmen/lecture_1_presentation.pdf
-- Handout: https://lukas-hiube.github.io/BZG1315-Zufallsgesteuerte-Algorithmen/lecture_1_handout.pdf
 
 Inhalt:
 - Einleitung

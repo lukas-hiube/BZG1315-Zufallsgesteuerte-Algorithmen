@@ -18,5 +18,5 @@ Fehler stehen im Log unter `out/<lecture>/build/<kind>/<kind>.log`.
 ## Struktur
 
 - `lectures/<lecture>/{handout,presentation}/<kind>.tex` mit Inhalten in `content/*.tex`
-- `tools/` enthält HTML-Tools zur Veranschaulichung (`lattice_tool.html`, `lwe_tool.html`)
+- `docs/` enthält HTML-Tools zur Veranschaulichung (`lattice_tool.html`, `lwe_tool.html`) und wird als GitHub Pages (Deploy from branch, `/docs`) ausgeliefert
 - Folien und Notizen sind auf Deutsch. Begriffe wie SVP, CVP, LWE und deren englische Langform bleiben englisch.

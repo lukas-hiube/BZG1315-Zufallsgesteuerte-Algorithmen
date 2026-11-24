@@ -1,7 +1,7 @@
 # BZG1315 Zufallsgesteuerte Algorithmen - Post-Quanten Kryptografie
 
 - Repository: https://github.com/lukas-hiube/BZG1315-Zufallsgesteuerte-Algorithmen
-- Lattice Visualizer (GitHub Pages): https://lukas-hiube.github.io/BZG1315-Zufallsgesteuerte-Algorithmen/
+- Lattice Visualizer (GitHub Pages): https://lukas-hiube.github.io/BZG1315-Zufallsgesteuerte-Algorithmen/lattice_tool.html
 
 Vorträge:
 1. 14.11.26 - 60' - 90': Einführung in Gitterprobleme & LWE
@@ -18,9 +18,7 @@ Inhalt:
 
 Quellen:
 - Allgemein:
-  - [sources/Agrawal-LatticeBased-PQC.pdf](sources/Agrawal-LatticeBased-PQC.pdf)
-  - [sources/Gentle introduction to lattice-based post-quantum cryptography – Cybersecurity-BlogFrauenhofer.pdf](<sources/Gentle introduction to lattice-based post-quantum cryptography – Cybersecurity-BlogFrauenhofer.pdf>)
-  - [sources/MA-Arbeit-Eberhardt-gitterbasiertePQK.pdf](sources/MA-Arbeit-Eberhardt-gitterbasiertePQK.pdf)
+  - Fraunhofer AISEC Cybersecurity Blog: [A (somewhat) gentle introduction to lattice-based post-quantum cryptography](https://www.cybersecurity.blog.aisec.fraunhofer.de/en/) (14.6.2023)
 - Gitter:
   - YouTube - [Chalk Talk](https://www.youtube.com/@chalktalkmath): [The tricky math of dots](https://www.youtube.com/watch?v=QDdOoYdb748)
 - Learning with Errors: 

@@ -97,15 +97,13 @@
 \end{frame}
 
 \begin{frame}{LWE-Beispiel: mit Fehler}
-    Gleiche Daten, aber mit geheimem, kleinem Fehler $\mathbf{e} = (1, -1, 1, 0)^T$:
+    Gleiche Daten, aber mit geheimem kleinem Fehler $\mathbf{e} = (1, -1, 1, 0)^T$. Öffentlich: $(\mathbf{A}, \mathbf{b})$, geheim: $\mathbf{s}$, $\mathbf{e}$.
     \[
         \mathbf{A} \cdot \mathbf{s} + \mathbf{e} = \mathbf{b},
         \qquad
-        \mathbf{b} = \begin{pmatrix} 0 \\ 4 \\ 9 \\ 12 \end{pmatrix}
-        \bmod 17
+        \mathbf{b} = (0, 4, 9, 12)^T \bmod 17
     \]
     \begin{itemize}
-        \item Öffentlich bekannt: $(\mathbf{A}, \mathbf{b})$. Geheim: $\mathbf{s}$ und $\mathbf{e}$
         \item Gauss mit den ersten beiden Gleichungen liefert $(12, 12)^T$
         \item {
             Falsch: Gleichung 3 ergibt $7 \cdot 12 + 11 \cdot 12 = 12 \neq 9$
@@ -117,6 +115,7 @@
             \newline
             \(\rightarrow\) alle $17^2 = 289$ Kandidaten probieren: nur $(3, 5)^T$ passt
         }
+        \item Kyber-768: $m = 768$, $q = 3329$ $\Rightarrow$ $3329^{768} \approx 10^{2705}$ Kandidaten
     \end{itemize}
     \note{
         Der Fehler macht das System inkonsistent: Zwei beliebige Gleichungen liefern eine Lösung, die zu den anderen Gleichungen nicht passt.
@@ -124,7 +123,10 @@
         \newline
         Bei diesem Spielzeugbeispiel gibt es genau ein $\mathbf{s}$, bei dem alle Reste $\mathbf{b} - \mathbf{A}\mathbf{s}$ im Bereich $\{-1, 0, 1\}$ liegen, nämlich $(3, 5)^T$ mit Rest $\mathbf{e} = (1, -1, 1, 0)^T$.
         Das ist genau die Idee von CVP: der Gitterpunkt $\mathbf{A}\mathbf{s}$, der $\mathbf{b}$ am nächsten liegt.
-        Bei realen Parametern ist die Suche nach diesem Punkt zu aufwendig: Mit $n \approx 256$ Unbekannten und grossem $q$ (Kyber: $q = 3329$) ist Durchprobieren unmöglich.
+        Bei realen Parametern ist die Suche nach diesem Punkt zu aufwendig.\newline
+        \newline
+        Kyber-768 hat ein Secret mit $m = 768$ Einträgen in $\mathbb{Z}_{3329}$. Das sind $3329^{768} \approx 10^{2705}$ (etwa $2^{8986}$) Kandidaten. Zum Vergleich: Das sichtbare Universum enthält etwa $10^{80}$ Atome.\newline
+        Selbst wenn man ausnutzt, dass die Einträge des Secrets bei Kyber klein sind (hier aus $\{-2, \dots, 2\}$), bleiben $5^{768} \approx 10^{537}$ Möglichkeiten.
     }
 \end{frame}
 

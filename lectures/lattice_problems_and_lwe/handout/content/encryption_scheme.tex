@@ -20,3 +20,27 @@ Die folgende vereinfachte Grundidee überträgt eine Nachricht aus einem einzeln
 Beim Entschlüsseln bleibt für $\mu = 0$ nur die kleine Summe der Fehler $e_i$ der ausgewählten Gleichungen übrig, für $\mu = 1$ kommt $\lfloor q/2 \rfloor$ dazu. Der Fehler muss deshalb klein genug sein, damit sich die Fehler der ausgewählten Gleichungen nicht zu stark addieren und das Bit sicher erkannt wird.
 
 \paragraph{Sicherheit.} Ohne $\mathbf{s}$ wirkt der verschlüsselte Text $(\mathbf{u}, v)$ zufällig (dLWE). Ein Angreifer müsste ein Gitterproblem lösen, um an die Nachricht zu kommen.
+
+\section{Beispiel}
+Wir verwenden $q = 17$, den Private Key $\mathbf{s} = (3, 5)^T$ und den Public Key $(\mathbf{A}, \mathbf{b})$ aus dem LWE-Beispiel mit
+\[
+    \mathbf{A} = \begin{pmatrix} 9 & 8 \\ 4 & 2 \\ 7 & 11 \\ 6 & 9 \end{pmatrix},
+    \qquad
+    \mathbf{b} = (0, 4, 9, 12)^T.
+\]
+Die Nachricht ist das Bit $\mu = 1$.
+
+\paragraph{Encrypt.} Wir wählen zufällig die Gleichungen 1, 3 und 4 und addieren sie:
+\begin{align*}
+    \mathbf{u} &= (9, 8) + (7, 11) + (6, 9) = (5, 11) \bmod 17, \\
+    v &= 0 + 9 + 12 + \mu \cdot \lfloor 17/2 \rfloor = 4 + 8 = 12 \bmod 17.
+\end{align*}
+Der verschlüsselte Text ist $(\mathbf{u}, v) = ((5, 11), 12)$.
+
+\paragraph{Decrypt.} Mit dem Secret gilt $\langle \mathbf{u}, \mathbf{s} \rangle = 5 \cdot 3 + 11 \cdot 5 = 70 = 2 \bmod 17$ und damit
+\[
+    r = v - \langle \mathbf{u}, \mathbf{s} \rangle = 12 - 2 = 10.
+\]
+$10$ ist näher bei $\lfloor 17/2 \rfloor = 8$ als bei $0$, also ist $\mu = 1$.
+
+Zur Kontrolle: Für $\mu = 0$ wäre $v = 4$ und $r = 4 - 2 = 2$, also nahe bei $0$. Die $2$ ist die Summe der Fehler $e_1 + e_3 + e_4 = 1 + 1 + 0$ der drei gewählten Gleichungen. Die Entschlüsselung funktioniert, solange diese Summe kleiner als $q/4 \approx 4$ bleibt. Deshalb müssen die Fehler klein sein, und man darf nicht zu viele Gleichungen addieren.

@@ -1,5 +1,7 @@
 # BZG1315 Zufallsgesteuerte Algorithmen - Post-Quanten Kryptografie
 
+Lattice Visualizer (GitHub Pages): https://lukas-hiube.github.io/BZG1315-Zufallsgesteuerte-Algorithmen/
+
 Vorträge:
 1. 14.11.26 - 60' - 90': Einführung in Gitterprobleme & LWE
 2. 01.12.26 - 60' - 90': Verfahren von Regev & Einblick in (Baby)-Kyber
@@ -13,13 +15,16 @@ Inhalt:
 - LWE (Learning with errors)
 - Verschlüsselungssysteme basierend auf LWE und Gitterproblemen
 
-Handout:
-- 
-
 Quellen:
+- Allgemein:
+  - [sources/Agrawal-LatticeBased-PQC.pdf](sources/Agrawal-LatticeBased-PQC.pdf)
+  - [sources/Gentle introduction to lattice-based post-quantum cryptography – Cybersecurity-BlogFrauenhofer.pdf](<sources/Gentle introduction to lattice-based post-quantum cryptography – Cybersecurity-BlogFrauenhofer.pdf>)
+  - [sources/MA-Arbeit-Eberhardt-gitterbasiertePQK.pdf](sources/MA-Arbeit-Eberhardt-gitterbasiertePQK.pdf)
+- Gitter:
+  - YouTube - [Chalk Talk](https://www.youtube.com/@chalktalkmath): [The tricky math of dots](https://www.youtube.com/watch?v=QDdOoYdb748)
 - Learning with Errors: 
   - https://web.stanford.edu/class/cs354/scribe/lecture14.pdf
-  - https://www.youtube.com/watch?v=K026C5YaB3A
+  - YouTube - [Chalk Talk](https://www.youtube.com/@chalktalkmath): [Learning with errors: Encrypting with unsolvable equations](https://www.youtube.com/watch?v=K026C5YaB3A)
 
 
 ## Verfahren von Regev & Einblick in (Baby)-Kyber

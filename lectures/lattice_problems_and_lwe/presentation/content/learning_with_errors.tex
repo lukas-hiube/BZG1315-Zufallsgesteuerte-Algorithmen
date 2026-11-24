@@ -74,6 +74,60 @@
     }
 \end{frame}
 
+\begin{frame}{LWE-Beispiel: ohne Fehler}
+    Wähle $q = 17$, $n = 4$ Gleichungen, $m = 2$ Unbekannte und das Secret $\mathbf{s} = (3, 5)^T$ (geheim).
+    \[
+        \underbrace{\begin{pmatrix}
+            9 & 8 \\ 4 & 2 \\ 7 & 11 \\ 6 & 9
+        \end{pmatrix}}_{\mathbf{A}}
+        \cdot
+        \begin{pmatrix} s_1 \\ s_2 \end{pmatrix}
+        =
+        \underbrace{\begin{pmatrix} 16 \\ 5 \\ 8 \\ 12 \end{pmatrix}}_{\mathbf{b}}
+        \bmod 17
+    \]
+    \begin{itemize}
+        \item Zwei Gleichungen genügen: Gauss-Algorithmus liefert $\mathbf{s} = (3, 5)^T$
+        \item Kontrolle, z.B. Gleichung 3: $7 \cdot 3 + 11 \cdot 5 = 76 = 8 \bmod 17$
+    \end{itemize}
+    \note{
+        Ohne Fehler ist das ein ganz normales lineares Gleichungssystem, nur dass man modulo $17$ rechnet.
+        Aus den ersten beiden Gleichungen ergibt sich das Secret mit dem Gauss-Algorithmus. Die Determinante $9 \cdot 2 - 8 \cdot 4 = -14 = 3 \bmod 17$ ist invertierbar, deshalb ist die Lösung eindeutig.
+    }
+\end{frame}
+
+\begin{frame}{LWE-Beispiel: mit Fehler}
+    Gleiche Daten, aber mit geheimem, kleinem Fehler $\mathbf{e} = (1, -1, 1, 0)^T$:
+    \[
+        \mathbf{A} \cdot \mathbf{s} + \mathbf{e} = \mathbf{b},
+        \qquad
+        \mathbf{b} = \begin{pmatrix} 0 \\ 4 \\ 9 \\ 12 \end{pmatrix}
+        \bmod 17
+    \]
+    \begin{itemize}
+        \item Öffentlich bekannt: $(\mathbf{A}, \mathbf{b})$. Geheim: $\mathbf{s}$ und $\mathbf{e}$
+        \item Gauss mit den ersten beiden Gleichungen liefert $(12, 12)^T$
+        \item {
+            Falsch: Gleichung 3 ergibt $7 \cdot 12 + 11 \cdot 12 = 12 \neq 9$
+            \newline
+            \(\rightarrow\) das Gleichungssystem hat keine exakte Lösung mehr
+        }
+        \item {
+            Gesucht: das $\mathbf{s}$, bei dem $\mathbf{b} - \mathbf{A} \cdot \mathbf{s}$ nur kleine Einträge hat
+            \newline
+            \(\rightarrow\) alle $17^2 = 289$ Kandidaten probieren: nur $(3, 5)^T$ passt
+        }
+    \end{itemize}
+    \note{
+        Der Fehler macht das System inkonsistent: Zwei beliebige Gleichungen liefern eine Lösung, die zu den anderen Gleichungen nicht passt.
+        Man müsste also erraten, welche Gleichungen wie stark verfälscht sind.\newline
+        \newline
+        Bei diesem Spielzeugbeispiel gibt es genau ein $\mathbf{s}$, bei dem alle Reste $\mathbf{b} - \mathbf{A}\mathbf{s}$ im Bereich $\{-1, 0, 1\}$ liegen, nämlich $(3, 5)^T$ mit Rest $\mathbf{e} = (1, -1, 1, 0)^T$.
+        Das ist genau die Idee von CVP: der Gitterpunkt $\mathbf{A}\mathbf{s}$, der $\mathbf{b}$ am nächsten liegt.
+        Bei realen Parametern ist die Suche nach diesem Punkt zu aufwendig: Mit $n \approx 256$ Unbekannten und grossem $q$ (Kyber: $q = 3329$) ist Durchprobieren unmöglich.
+    }
+\end{frame}
+
 \begin{frame}{Decisional LWE (dLWE)}
     \[
         \mathbf{A} \cdot \mathbf{s} + \mathbf{e} = \mathbf{b},
@@ -88,7 +142,7 @@
                 \item oder zufällig gewählt wurden
             \end{itemize}
         }
-        \item Odded Regev hat die Reduktion von LWE auf dLWE bewiesen
+        \item Oded Regev hat die Reduktion von LWE auf dLWE bewiesen
     \end{itemize}
     \note{
         Warum ist das relevant? Bei einem Verschlüsselungssystem reicht es nicht, dass der Angreifer das Secret nicht finden kann.
@@ -119,7 +173,7 @@
 \end{frame}
 
 \begin{frame}{Verbindung zwischen LWE und Gitterproblemen: SVP}
-    Sei $\mathcal{L}$ ein Gitter, $\parallel$ die Konkatenation und $\mathbf{I}_n$ die $n \times n$-Einheitsmatrix
+    Sei $\mathcal{L}$ ein Gitter, $\parallel$ die Konkatenation und $\mathbf{I}_n$ die $n \times n$-Einheitsmatrize
     \[
         \mathcal{L} = \{\mathbf{x} \in \mathbb{Z}^{m+n+1} \mid (\mathbf{A} \parallel \mathbf{I}_n \parallel (-\mathbf{b})) \cdot \mathbf{x} = \mathbf{0} \bmod q\},
     \]
@@ -167,5 +221,36 @@
         Ein Angreifer ohne Secret müsste ein Gitterproblem lösen.\newline
         \newline
         Für längere Nachrichten wird die Nachricht Bit für Bit verschlüsselt.
+    }
+\end{frame}
+
+\begin{frame}{Verschlüsselung mit LWE: Beispiel}
+    Public Key: $(\mathbf{A}, \mathbf{b})$ von oben, $q = 17$, Private Key: $\mathbf{s} = (3, 5)^T$. Nachricht: Bit $\mu = 1$.
+    \begin{itemize}
+        \item {
+            \textbf{Encrypt:} wähle zufällig die Gleichungen 1, 3 und 4 und addiere sie
+            \[
+                \mathbf{u} = (9, 8) + (7, 11) + (6, 9) = (5, 11) \bmod 17
+            \]
+            \[
+                v = 0 + 9 + 12 + \mu \cdot \lfloor 17/2 \rfloor = 4 + 8 = 12 \bmod 17
+            \]
+            Chiffretext: $(\mathbf{u}, v) = ((5, 11), 12)$
+        }
+        \item {
+            \textbf{Decrypt:} $\langle \mathbf{u}, \mathbf{s} \rangle = 5 \cdot 3 + 11 \cdot 5 = 70 = 2 \bmod 17$
+            \[
+                r = v - \langle \mathbf{u}, \mathbf{s} \rangle = 12 - 2 = 10
+            \]
+            $10$ ist näher bei $\lfloor 17/2 \rfloor = 8$ als bei $0$ $\Rightarrow$ Bit $= 1$
+        }
+    \end{itemize}
+    \note{
+        Zur Kontrolle: Wäre $\mu = 0$, wäre $v = 4$ und $r = 4 - 2 = 2$, also nahe bei $0$. Die $2$ ist genau die Summe der Fehler $e_1 + e_3 + e_4 = 1 + 1 + 0$ der drei ausgewählten Gleichungen.
+        Für $\mu = 1$ kommt $8$ dazu, also $r = 10$.\newline
+        \newline
+        Die Entschlüsselung klappt, solange die Summe der Fehler kleiner als $q/4 \approx 4$ bleibt. Deshalb müssen die Fehler klein sein und man darf nicht zu viele Gleichungen addieren.\newline
+        \newline
+        Ein Angreifer sieht nur $(\mathbf{A}, \mathbf{b})$ und $(\mathbf{u}, v)$. Ohne $\mathbf{s}$ kann er $\langle \mathbf{u}, \mathbf{s} \rangle$ nicht berechnen.
     }
 \end{frame}

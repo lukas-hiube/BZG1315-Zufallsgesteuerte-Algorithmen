@@ -39,13 +39,13 @@ und das Lösen wird überraschend schwer (s. Verbindung zu Gitterproblemen).
 \section{Ein konkretes Beispiel}
 Wir wählen $q = 17$, $n = 4$ Gleichungen, $m = 2$ Unbekannte und das geheime Secret $\mathbf{s} = (3, 5)^T$. Dabei steht $^T$ für transponiert, das heisst $\mathbf{s}$ ist ein Spaltenvektor.
 
-\paragraph{Ohne Fehler.} Mit
+\paragraph{Ohne Fehler:} Mit
 \[
     \mathbf{A} = \begin{pmatrix} 9 & 8 \\ 4 & 2 \\ 7 & 11 \\ 6 & 9 \end{pmatrix}
 \]
 ist $\mathbf{A} \cdot \mathbf{s} = (16, 5, 8, 12)^T \bmod 17$. Zwei Gleichungen genügen, um $\mathbf{s}$ mit dem Gauss-Algorithmus zu berechnen, denn die Determinante der ersten beiden Zeilen ist $9 \cdot 2 - 8 \cdot 4 = -14 = 3 \bmod 17$ und damit invertierbar. Zur Kontrolle mit Gleichung 3: $7 \cdot 3 + 11 \cdot 5 = 76 = 8 \bmod 17$.
 
-\paragraph{Mit Fehler.} Nun kommt der geheime kleine Fehler $\mathbf{e} = (1, -1, 1, 0)^T$ dazu. Öffentlich bekannt sind nur $\mathbf{A}$ und
+\paragraph{Mit Fehler:} Nun kommt der geheime kleine Fehler $\mathbf{e} = (1, -1, 1, 0)^T$ dazu. Öffentlich bekannt sind nur $\mathbf{A}$ und
 \[
     \mathbf{b} = \mathbf{A} \cdot \mathbf{s} + \mathbf{e} = (0, 4, 9, 12)^T \bmod 17.
 \]
@@ -53,7 +53,7 @@ Löst man mit den ersten beiden Gleichungen, erhält man $(12, 12)^T$. Das ist f
 
 Gesucht ist stattdessen das $\mathbf{s}$, bei dem $\mathbf{b} - \mathbf{A} \cdot \mathbf{s}$ nur kleine Einträge hat. In diesem Spielzeugbeispiel kann man alle $17^2 = 289$ Kandidaten durchprobieren, und nur $(3, 5)^T$ passt: Der Rest ist $\mathbf{e} = (1, -1, 1, 0)^T$. Das entspricht genau dem CVP, denn $\mathbf{A} \cdot \mathbf{s}$ ist der Gitterpunkt, der $\mathbf{b}$ am nächsten liegt.
 
-\paragraph{Reale Parameter.} Bei Kyber-768 hat das Secret $m = 768$ Einträge in $\mathbb{Z}_{3329}$. Das sind $3329^{768} \approx 10^{2705}$ (etwa $2^{8986}$) Kandidaten. Zum Vergleich: Das sichtbare Universum enthält etwa $10^{80}$ Atome. Selbst wenn man ausnutzt, dass die Einträge des Secrets bei Kyber klein sind (hier aus $\{-2, \dots, 2\}$), bleiben $5^{768} \approx 10^{537}$ Möglichkeiten.
+\paragraph{Reale Parameter:} Bei Kyber-768 hat das Secret $m = 768$ Einträge in $\mathbb{Z}_{3329}$. Das sind $3329^{768} \approx 10^{2705}$ (etwa $2^{8986}$) Kandidaten. Zum Vergleich: Das sichtbare Universum enthält etwa $10^{80}$ Atome. Selbst wenn man ausnutzt, dass die Einträge des Secrets bei Kyber klein sind (hier aus $\{-2, \dots, 2\}$), bleiben $5^{768} \approx 10^{537}$ Möglichkeiten.
 
 \section{Decisional LWE (dLWE)}
 Das LWE-Problem lässt sich auch als Entscheidungsproblem formulieren. Gegeben ist eine LWE-Aufgabe $(\mathbf{A}, \mathbf{b})$, wobei $\mathbf{s}$ und $\mathbf{e}$ geheim sind. Die Aufgabe ist zu erraten, ob $\mathbf{b}$ als $\mathbf{A} \cdot \mathbf{s} + \mathbf{e}$ berechnet oder zufällig gewählt wurde. Oded Regev hat gezeigt, dass beide Varianten gleich schwer sind.

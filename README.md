@@ -19,6 +19,7 @@ Inhalt:
 Quellen:
 - Allgemein:
   - Fraunhofer AISEC Cybersecurity Blog: [A (somewhat) gentle introduction to lattice-based post-quantum cryptography](https://www.cybersecurity.blog.aisec.fraunhofer.de/en/) (14.6.2023)
+  - Jan Eberhardt: Gitterbasierte Post-Quantum-Kryptographie, Masterarbeit, Leibniz Universität Hannover, 2018
 - Gitter:
   - YouTube - [Chalk Talk](https://www.youtube.com/@chalktalkmath): [The tricky math of dots](https://www.youtube.com/watch?v=QDdOoYdb748)
 - Learning with Errors: 

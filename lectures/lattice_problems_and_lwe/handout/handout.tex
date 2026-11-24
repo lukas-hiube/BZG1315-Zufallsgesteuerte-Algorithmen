@@ -17,6 +17,7 @@
 
 \LoadBFHModule{listings,terminal,boxes}
 \usepackage{qrcode}
+\usepackage{tikz}
 %---------------------------------------------------------------------------
 % Documents paths
 %---------------------------------------------------------------------------
@@ -91,6 +92,9 @@
 ,urlcolor=blue
 ,citecolor=blue
 ]{hyperref}
+\urlstyle{tt}
+\renewcommand{\UrlFont}{\ttfamily\scriptsize}
+\makeatletter\g@addto@macro\UrlBreaks{\do\-\do\.\do\_}\makeatother
 \usepackage{glossaries}
 \usepackage{xparse}
 \usepackage{color}
@@ -129,6 +133,14 @@
     \degreeprogram{Bachelor of Science in Computer Science}
 
 %----------------  BFH tile page   -----------------------------------------
+    % QR-Code zum Repository unten rechts auf der Titelseite (nur auf der nächsten Seite)
+    \AddToHookNext{shipout/foreground}{%
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[anchor=south east,xshift=-2cm,yshift=2.5cm,align=center,font=\scriptsize]
+                at (current page.south east)
+                {\color{black}\qrcode[height=2.2cm,nolink]{https://github.com/lukas-hiube/BZG1315-Zufallsgesteuerte-Algorithmen}\\[0.5ex]Repository};
+        \end{tikzpicture}%
+    }
     \maketitle
 
 %------------ TABLEOFCONTENTS ----------------
